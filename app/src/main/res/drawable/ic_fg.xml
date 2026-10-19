@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- pen nib -->
+    <path
+        android:fillColor="#4C8DFF"
+        android:pathData="M54,26 L72,56 L54,72 L36,56 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,50 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:pathData="M54,54 L54,72" />
+    <path
+        android:fillColor="#FF7A1A"
+        android:pathData="M42,74 L66,74 L66,80 L42,80 Z" />
+</vector>

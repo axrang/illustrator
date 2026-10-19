@@ -1,0 +1,1545 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#23252b">
+<title>Vector Studio</title>
+<style>:root{--bg:#15161a;--panel:#23252b;--panel2:#2e3138;--line:#3b3e46;--tx:#eceef1;--mut:#9aa1ab;--acc:#4c8dff;--acc2:#ff7a1a}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:13px/1.45 system-ui,"Vazirmatn",Tahoma,sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+#app{display:flex;flex-direction:column;height:100%;height:100dvh;padding-bottom:env(safe-area-inset-bottom)}
+#top{display:flex;align-items:center;gap:4px;padding:max(4px,env(safe-area-inset-top)) 6px 4px;background:var(--panel);border-bottom:1px solid var(--line);direction:ltr}
+#top .ttl{flex:1;font-weight:700;letter-spacing:.3px;padding:0 6px;color:var(--mut);font-size:12px}
+button{font:inherit;color:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:0 10px;min-height:38px;cursor:pointer;touch-action:manipulation}
+button:active{filter:brightness(1.3)}
+button:disabled{opacity:.35}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.ib{width:40px;padding:0;display:grid;place-items:center}
+#zFit{min-width:56px;padding:0 6px}
+#stage{flex:1;position:relative;min-height:90px;background:#5b5f67;touch-action:none;overflow:hidden;direction:ltr}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#ctx{display:flex;gap:6px;overflow-x:auto;padding:5px 6px;background:var(--panel);border-top:1px solid var(--line);scrollbar-width:none;flex:0 0 auto}
+#ctx::-webkit-scrollbar,#tools::-webkit-scrollbar,#tabs::-webkit-scrollbar{display:none}
+.cb{flex:0 0 auto;min-height:34px;font-size:12px;white-space:nowrap}
+.cb.big{min-height:44px;font-size:13px;flex:1 1 140px}
+.cb.pri{background:#2a4a85;border-color:var(--acc)}
+#tools{display:flex;overflow-x:auto;background:var(--panel);border-top:1px solid var(--line);direction:ltr;flex:0 0 auto;scrollbar-width:none}
+.tool{flex:0 0 auto;width:58px;height:52px;border:0;border-radius:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;color:#c5cad1}
+.tool span{font-size:9.5px;white-space:nowrap}
+.tool.on{background:var(--acc);color:#fff}
+#tabs{display:flex;background:#1b1c20;border-top:1px solid var(--line);flex:0 0 auto}
+.tab{flex:1;border:0;border-radius:0;background:transparent;min-height:40px;color:var(--mut);padding:0 2px;font-size:12.5px}
+.tab.on{color:#fff;border-bottom:2px solid var(--acc);background:var(--panel)}
+#panel{height:0;overflow:hidden auto;background:var(--panel);flex:0 0 auto;padding:0 10px;transition:height .15s}
+#panel.open{height:36vh;padding:8px 10px 14px}
+h4{margin:12px 0 6px;font-size:12px;color:var(--mut);font-weight:600}
+.prow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.lb{color:var(--mut);font-size:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:0;border-radius:0;min-height:34px;font-size:12px;padding:0 9px}
+.nf{display:flex;flex-direction:column;gap:2px;flex:1 1 70px;min-width:64px}
+.nf.wide{flex:1 1 100%}
+.nf span,.rf span{font-size:11px;color:var(--mut)}
+input[type=number],input[type=text],textarea,select{background:#17181c;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:7px 8px;font:inherit;width:100%;-webkit-user-select:text;user-select:text}
+.rf{display:grid;grid-template-columns:1fr 44px;grid-template-areas:"l o" "r r";gap:0 6px;flex:1 1 150px;align-items:center}
+.rf span{grid-area:l}.rf output{grid-area:o;text-align:end;font-size:12px;color:var(--tx)}.rf input{grid-area:r;width:100%}
+input[type=range]{accent-color:var(--acc);height:28px}
+.chk{display:flex;gap:6px;align-items:center;font-size:12.5px}
+.chk input{width:20px;height:20px;accent-color:var(--acc)}
+.swt{display:flex;align-items:center;gap:6px;min-height:40px;padding:0 10px 0 8px}
+.swt i{width:24px;height:24px;border-radius:6px;border:2px solid #fff6;display:block;background:#000}
+.swt i.none{background:linear-gradient(135deg,transparent 45%,#e33 45%,#e33 55%,transparent 55%),#fff}
+.swt.on{outline:2px solid var(--acc)}
+.swt span{font-size:12px}
+.sws{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.sw{width:30px;height:30px;border-radius:7px;padding:0;min-height:0;border:1px solid #fff4}
+#pk{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+#pkcv{width:100%;height:105px;border-radius:10px;touch-action:none}
+#pk input[type=text],#pkhex{background:#17181c;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:7px;font:inherit;width:100%;-webkit-user-select:text}
+#pkh{width:100%;-webkit-appearance:none;appearance:none;height:16px;border-radius:8px;background:linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+#pkh::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid #000}
+.list{display:flex;flex-direction:column;gap:4px}
+.li,.oi{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:3px 6px;min-height:40px}
+.li button{background:transparent;border:0;min-height:34px;padding:0 6px;font-size:16px}
+.li.cur{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.oi.on{background:#264a8a;border-color:var(--acc)}
+.nm{flex:1}.cnt{color:var(--mut);font-size:11px}
+.hint{color:var(--mut);font-size:12px;line-height:1.7;margin:10px 2px}
+#modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+#modal.show{display:flex}
+.mbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;width:min(420px,100%);display:flex;flex-direction:column;gap:12px}
+.mbox h3{margin:0;font-size:15px}
+.mrow{display:flex;gap:8px;justify-content:flex-end}
+.mrow .pri{background:var(--acc);border-color:var(--acc);color:#fff}
+#toast{position:fixed;left:50%;bottom:calc(30vh + 70px);transform:translateX(-50%) translateY(20px);background:#000d;color:#fff;padding:9px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:.2s;z-index:60;font-size:13px;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%)}
+.filebtn{display:grid;place-items:center;padding:0 10px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <button id="bUndo" class="ib" aria-label="Undo"></button>
+    <button id="bRedo" class="ib" aria-label="Redo"></button>
+    <span class="ttl">VECTOR STUDIO</span>
+    <button id="bGrid" class="ib" aria-label="Grid"></button>
+    <button id="zOut" class="ib">−</button>
+    <button id="zFit">100%</button>
+    <button id="zIn" class="ib">+</button>
+  </header>
+  <div id="stage">
+    <svg id="cv" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="gridpat" patternUnits="userSpaceOnUse" width="20" height="20"><path id="gridpath" d="M20 0H0V20" fill="none" stroke="rgba(0,0,0,.18)"/></pattern></defs>
+      <g id="world">
+        <rect id="shadow" x="4" y="6" fill="rgba(0,0,0,.35)"/>
+        <rect id="board" x="0" y="0" fill="#fff"/>
+        <rect id="gridrect" x="0" y="0" fill="url(#gridpat)" style="display:none;pointer-events:none"/>
+        <g id="content"></g>
+      </g>
+      <g id="ovl" style="pointer-events:none"></g>
+    </svg>
+  </div>
+  <div id="ctx"></div>
+  <nav id="tools"></nav>
+  <nav id="tabs"></nav>
+  <section id="panel"></section>
+</div>
+<div id="modal"></div>
+<div id="toast"></div>
+<script>'use strict';
+/* ===== Vector Studio – core: data model, geometry, history ===== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const N = n => (+(+n).toFixed(3)).toString();
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const KAPPA = 0.5522847498;
+const FONTS = { sans: 'Arial, Helvetica, Tahoma, sans-serif', serif: '"Times New Roman", Times, serif', mono: '"Courier New", Courier, monospace' };
+
+function newDoc(w = 1080, h = 1080) {
+  return { w, h, bg: '#ffffff', grid: 20, uid: 1, layers: [{ id: 'l1', name: 'لایه ۱', visible: true, locked: false, objs: [] }] };
+}
+let doc = newDoc();
+const nid = () => 'o' + (doc.uid++);
+
+const S = {
+  tool: 'select', sel: [], anchors: new Set(), cur: 0,
+  view: { x: 0, y: 0, s: 1 },
+  style: { fill: '#4c8dff', grad: null, stroke: '#16181d', sw: 3, cap: 'round', join: 'round', dash: 'none', op: 1, rule: 'nonzero' },
+  target: 'fill', snap: false, showGrid: false, constrain: false, multi: false, lockRatio: true,
+  opt: { radius: 0, sides: 6, points: 5, inner: 0.5, font: 'sans', size: 56, bold: false, italic: false },
+  pen: null, draft: null, act: null, clip: null, panel: null, recent: []
+};
+
+/* ---- points / paths ---- */
+const P = (x, y, s = false) => ({ x, y, ix: x, iy: y, ox: x, oy: y, s });
+const hasH = p => p.ix !== p.x || p.iy !== p.y || p.ox !== p.x || p.oy !== p.y;
+
+function pathD(sub) {
+  const p = sub.pts, n = p.length;
+  if (!n) return '';
+  const seg = (a, b) => (a.ox === a.x && a.oy === a.y && b.ix === b.x && b.iy === b.y)
+    ? `L${N(b.x)} ${N(b.y)}` : `C${N(a.ox)} ${N(a.oy)} ${N(b.ix)} ${N(b.iy)} ${N(b.x)} ${N(b.y)}`;
+  let d = `M${N(p[0].x)} ${N(p[0].y)}`;
+  for (let i = 1; i < n; i++) d += seg(p[i - 1], p[i]);
+  if (sub.closed && n > 1) d += seg(p[n - 1], p[0]) + 'Z';
+  return d;
+}
+function bez(a, b, t) {
+  const u = 1 - t;
+  return [u * u * u * a.x + 3 * u * u * t * a.ox + 3 * u * t * t * b.ix + t * t * t * b.x,
+          u * u * u * a.y + 3 * u * u * t * a.oy + 3 * u * t * t * b.iy + t * t * t * b.y];
+}
+function flat(sub, n = 16) {
+  const p = sub.pts, out = [];
+  if (p.length === 1) return [[p[0].x, p[0].y]];
+  const segs = sub.closed ? p.length : p.length - 1;
+  for (let i = 0; i < segs; i++) {
+    const a = p[i], b = p[(i + 1) % p.length];
+    for (let k = i === 0 ? 0 : 1; k <= n; k++) out.push(bez(a, b, k / n));
+  }
+  return out;
+}
+
+/* ---- affine matrices ---- */
+const M = (a = 1, b = 0, c = 0, d = 1, e = 0, f = 0) => ({ a, b, c, d, e, f });
+const ap = (m, x, y) => [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f];
+const compose = (m, n) => M(m.a * n.a + m.c * n.b, m.b * n.a + m.d * n.b, m.a * n.c + m.c * n.d, m.b * n.c + m.d * n.d,
+  m.a * n.e + m.c * n.f + m.e, m.b * n.e + m.d * n.f + m.f);
+const mTrans = (dx, dy) => M(1, 0, 0, 1, dx, dy);
+const mScaleAt = (sx, sy, cx, cy) => M(sx, 0, 0, sy, cx * (1 - sx), cy * (1 - sy));
+const mRotAt = (deg, cx, cy) => {
+  const r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+  return M(c, s, -s, c, cx - c * cx + s * cy, cy - s * cx - c * cy);
+};
+function mapObj(o, m) {
+  if (o.type === 'group') { o.children.forEach(c => mapObj(c, m)); return; }
+  if (o.type === 'text') {
+    const [nx, ny] = ap(m, o.x, o.y); o.x = nx; o.y = ny;
+    o.size *= Math.sqrt(Math.abs(m.a * m.d - m.b * m.c)) || 1;
+    o.rot = (o.rot || 0) + Math.atan2(m.b, m.a) * 180 / Math.PI;
+    return;
+  }
+  o.sub.forEach(s => s.pts.forEach(p => {
+    [p.x, p.y] = ap(m, p.x, p.y); [p.ix, p.iy] = ap(m, p.ix, p.iy); [p.ox, p.oy] = ap(m, p.ox, p.oy);
+  }));
+}
+
+/* ---- text metrics ---- */
+const mctx = document.createElement('canvas').getContext('2d');
+const fontStr = (o, size) => `${o.italic ? 'italic ' : ''}${o.bold ? 'bold ' : ''}${size || o.size}px ${FONTS[o.font] || FONTS.sans}`;
+function textLines(o) { return String(o.text).split('\n'); }
+function textBox(o) {
+  mctx.font = fontStr(o);
+  const lines = textLines(o);
+  const w = Math.max(1, ...lines.map(l => mctx.measureText(l).width));
+  const h = lines.length * 1.2 * o.size, top = o.y - o.size * 0.95;
+  const m = mRotAt(o.rot || 0, o.x, o.y);
+  const pts = [[o.x, top], [o.x + w, top], [o.x + w, top + h], [o.x, top + h]].map(p => ap(m, p[0], p[1]));
+  return [Math.min(...pts.map(p => p[0])), Math.min(...pts.map(p => p[1])), Math.max(...pts.map(p => p[0])), Math.max(...pts.map(p => p[1]))];
+}
+function bbox(o) {
+  if (o.type === 'group') return unionBox(o.children.map(bbox));
+  if (o.type === 'text') return textBox(o);
+  let b = null;
+  o.sub.forEach(s => flat(s).forEach(([x, y]) => {
+    if (!b) b = [x, y, x, y]; else { b[0] = Math.min(b[0], x); b[1] = Math.min(b[1], y); b[2] = Math.max(b[2], x); b[3] = Math.max(b[3], y); }
+  }));
+  return b || [0, 0, 0, 0];
+}
+function unionBox(list) {
+  list = list.filter(Boolean);
+  if (!list.length) return null;
+  return [Math.min(...list.map(b => b[0])), Math.min(...list.map(b => b[1])), Math.max(...list.map(b => b[2])), Math.max(...list.map(b => b[3]))];
+}
+
+/* ---- document lookups ---- */
+function findObj(id) {
+  for (let li = 0; li < doc.layers.length; li++) {
+    const arr = doc.layers[li].objs, idx = arr.findIndex(o => o.id === id);
+    if (idx >= 0) return { o: arr[idx], arr, idx, li };
+  }
+  return null;
+}
+const selObjs = () => S.sel.map(id => findObj(id)).filter(Boolean).map(r => r.o);
+const selBox = () => unionBox(selObjs().map(bbox));
+function cloneObj(o) {
+  const c = clone(o); c.id = nid();
+  if (c.type === 'group') c.children = c.children.map(ch => { const k = cloneObj(ch); return k; });
+  return c;
+}
+
+/* ---- history ---- */
+let hist = [], hi = -1;
+function commit() {
+  hist = hist.slice(0, hi + 1); hist.push(JSON.stringify(doc));
+  if (hist.length > 80) hist.shift();
+  hi = hist.length - 1; autosave(); uiRefresh();
+}
+function restore(str) {
+  doc = JSON.parse(str);
+  S.sel = S.sel.filter(id => findObj(id));
+  S.anchors.clear();
+  S.cur = clamp(S.cur, 0, doc.layers.length - 1);
+  render(); uiRefresh(true);
+}
+const undo = () => { if (hi > 0) { hi--; restore(hist[hi]); autosave(); } };
+const redo = () => { if (hi < hist.length - 1) { hi++; restore(hist[hi]); autosave(); } };
+function autosave() { try { localStorage.setItem('vs_doc', JSON.stringify(doc)); } catch (e) { } }
+function autoload() {
+  try { const s = localStorage.getItem('vs_doc'); if (s) { const d = JSON.parse(s); if (d && d.layers) doc = d; } } catch (e) { }
+}
+
+/* ---- color helpers ---- */
+function hex2rgb(h) { h = (h || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16) || 0; return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+const rgb2hex = (r, g, b) => '#' + [r, g, b].map(v => clamp(Math.round(v), 0, 255).toString(16).padStart(2, '0')).join('');
+function rgb2hsv(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0;
+  if (d) { if (mx === r) h = ((g - b) / d) % 6; else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
+  return [h, mx ? d / mx : 0, mx];
+}
+function hsv2rgb(h, s, v) {
+  const c = v * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = v - c; let r = 0, g = 0, b = 0;
+  if (h < 60) [r, g, b] = [c, x, 0]; else if (h < 120) [r, g, b] = [x, c, 0]; else if (h < 180) [r, g, b] = [0, c, x];
+  else if (h < 240) [r, g, b] = [0, x, c]; else if (h < 300) [r, g, b] = [x, 0, c]; else [r, g, b] = [c, 0, x];
+  return [(r + m) * 255, (g + m) * 255, (b + m) * 255];
+}
+
+/* ===== rendering, overlay, hit-testing ===== */
+const stage = () => $('#stage');
+const toW = (sx, sy) => ({ x: (sx - S.view.x) / S.view.s, y: (sy - S.view.y) / S.view.s });
+const toS = (x, y) => [x * S.view.s + S.view.x, y * S.view.s + S.view.y];
+const sn = v => S.snap ? Math.round(v / doc.grid) * doc.grid : v;
+const snapPt = p => ({ x: sn(p.x), y: sn(p.y) });
+
+function dashArr(o) {
+  const w = Math.max(o.sw || 1, 1);
+  if (o.dash === 'dash') return [w * 3, w * 2];
+  if (o.dash === 'dot') return [0.01, w * 2];
+  return null;
+}
+
+function objSvg(o, opt) {
+  opt = opt || {};
+  const id = opt.ids ? ` data-id="${o.id}"` : '';
+  const op = o.op != null && o.op < 1 ? ` opacity="${N(o.op)}"` : '';
+  if (o.type === 'group') return `<g${id}${op}>${o.children.map(c => objSvg(c, {})).join('')}</g>`;
+  let defs = '', fill = 'none';
+  if (o.grad) {
+    const b = bbox(o), cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2, a = o.grad.a * Math.PI / 180;
+    const half = (Math.abs((b[2] - b[0]) * Math.cos(a)) + Math.abs((b[3] - b[1]) * Math.sin(a))) / 2 || 1;
+    defs = `<linearGradient id="g_${o.id}" gradientUnits="userSpaceOnUse" x1="${N(cx - Math.cos(a) * half)}" y1="${N(cy - Math.sin(a) * half)}" x2="${N(cx + Math.cos(a) * half)}" y2="${N(cy + Math.sin(a) * half)}"><stop offset="0" stop-color="${o.grad.c1}"/><stop offset="1" stop-color="${o.grad.c2}"/></linearGradient>`;
+    fill = `url(#g_${o.id})`;
+  } else if (o.fill) fill = o.fill;
+  let stroke = '';
+  if (o.stroke && o.sw > 0) {
+    stroke = ` stroke="${o.stroke}" stroke-width="${N(o.sw)}" stroke-linecap="${o.cap || 'butt'}" stroke-linejoin="${o.join || 'miter'}"`;
+    const d = dashArr(o); if (d) stroke += ` stroke-dasharray="${d.map(N).join(' ')}"`;
+  }
+  if (o.type === 'text') {
+    const rot = o.rot ? ` transform="rotate(${N(o.rot)} ${N(o.x)} ${N(o.y)})"` : '';
+    const lines = textLines(o).map((l, i) => `<tspan x="${N(o.x)}" dy="${i ? N(o.size * 1.2) : 0}">${esc(l) || ' '}</tspan>`).join('');
+    return `<g${id}${op}>${defs}<text x="${N(o.x)}" y="${N(o.y)}" font-family="${esc(FONTS[o.font] || FONTS.sans)}" font-size="${N(o.size)}"${o.bold ? ' font-weight="bold"' : ''}${o.italic ? ' font-style="italic"' : ''} fill="${fill}"${stroke}${rot} xml:space="preserve">${lines}</text></g>`;
+  }
+  const d = o.sub.map(pathD).join('');
+  return `<g${id}${op}>${defs}<path d="${d}" fill="${fill}"${o.rule === 'evenodd' ? ' fill-rule="evenodd"' : ''}${stroke}/></g>`;
+}
+
+function docSvg(opts) {
+  opts = opts || {};
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${doc.w}" height="${doc.h}" viewBox="0 0 ${doc.w} ${doc.h}">`;
+  if (opts.bg) s += `<rect width="${doc.w}" height="${doc.h}" fill="${doc.bg}"/>`;
+  doc.layers.forEach((L, i) => {
+    if (!L.visible) return;
+    s += `<g id="Layer_${i + 1}" data-name="${esc(L.name)}">${L.objs.map(o => objSvg(o, {})).join('')}</g>`;
+  });
+  return s + '</svg>';
+}
+
+function draftObj() {
+  if (S.draft) return S.draft;
+  if (S.pen && S.pen.pts.length) {
+    const pts = S.pen.pts.concat(S.pen.tmp ? [S.pen.tmp] : []);
+    return { id: 'draft', type: 'path', sub: [{ closed: !!S.pen.closed, pts }], fill: null, grad: null, stroke: S.style.stroke || '#4c8dff', sw: Math.max(S.style.sw, 1), cap: 'round', join: 'round', dash: 'none', op: 1, rule: 'nonzero' };
+  }
+  return null;
+}
+
+let rafPending = false;
+function render() { if (rafPending) return; rafPending = true; requestAnimationFrame(() => { rafPending = false; renderNow(); }); }
+function renderNow() {
+  const v = S.view;
+  $('#world').setAttribute('transform', `translate(${N(v.x)} ${N(v.y)}) scale(${N(v.s)})`);
+  const board = $('#board'); board.setAttribute('width', doc.w); board.setAttribute('height', doc.h); board.setAttribute('fill', doc.bg);
+  const sh = $('#shadow'); sh.setAttribute('width', doc.w); sh.setAttribute('height', doc.h);
+  const grid = $('#gridrect');
+  if (S.showGrid) {
+    grid.setAttribute('width', doc.w); grid.setAttribute('height', doc.h); grid.style.display = '';
+    const pt = $('#gridpat'); pt.setAttribute('width', doc.grid); pt.setAttribute('height', doc.grid);
+    $('#gridpath').setAttribute('d', `M${doc.grid} 0H0V${doc.grid}`);
+    $('#gridpath').setAttribute('stroke-width', N(1 / v.s));
+  } else grid.style.display = 'none';
+  const parts = [];
+  doc.layers.forEach(L => { if (L.visible) L.objs.forEach(o => parts.push(objSvg(o, { ids: true }))); });
+  const dr = draftObj(); if (dr) parts.push(objSvg(dr, {}));
+  $('#content').innerHTML = parts.join('');
+  drawOverlay();
+}
+
+/* ---- overlay (screen-space UI) ---- */
+const HS = 6;
+const sq = (x, y, fill, extra) => `<rect x="${N(x - HS)}" y="${N(y - HS)}" width="${HS * 2}" height="${HS * 2}" fill="${fill}" stroke="#4c8dff" stroke-width="1.5" ${extra || ''}/>`;
+const ci = (x, y, r, fill) => `<circle cx="${N(x)}" cy="${N(y)}" r="${r}" fill="${fill}" stroke="#4c8dff" stroke-width="1.5"/>`;
+
+function handleList(b) {
+  const [x0, y0, x1, y1] = b, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  return [['nw', x0, y0], ['n', mx, y0], ['ne', x1, y0], ['e', x1, my], ['se', x1, y1], ['s', mx, y1], ['sw', x0, y1], ['w', x0, my]];
+}
+
+function drawOverlay() {
+  let h = '';
+  const a = S.act;
+  if ((S.tool === 'select') && S.sel.length) {
+    const b = selBox();
+    if (b) {
+      const [x0, y0] = toS(b[0], b[1]), [x1, y1] = toS(b[2], b[3]);
+      h += `<rect x="${N(x0)}" y="${N(y0)}" width="${N(x1 - x0)}" height="${N(y1 - y0)}" fill="none" stroke="#4c8dff" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+      handleList(b).forEach(hd => { const [px, py] = toS(hd[1], hd[2]); h += sq(px, py, '#fff'); });
+      const [tx, ty] = toS((b[0] + b[2]) / 2, b[1]);
+      h += `<line x1="${N(tx)}" y1="${N(ty)}" x2="${N(tx)}" y2="${N(ty - 30)}" stroke="#4c8dff"/>` + ci(tx, ty - 30, 7, '#fff');
+    }
+  }
+  if (['direct', 'addpt', 'delpt', 'convert'].includes(S.tool)) {
+    selObjs().forEach(o => {
+      if (o.type !== 'path') return;
+      h += `<path d="${o.sub.map(s => pathDS(s)).join('')}" fill="none" stroke="#4c8dff" stroke-width="1.2"/>`;
+      o.sub.forEach((s, si) => s.pts.forEach((p, pi) => {
+        const sel = S.anchors.has(`${o.id}|${si}|${pi}`);
+        const [px, py] = toS(p.x, p.y);
+        if (sel) {
+          [[p.ix, p.iy], [p.ox, p.oy]].forEach(([hx, hy]) => {
+            if (hx === p.x && hy === p.y) return;
+            const [qx, qy] = toS(hx, hy);
+            h += `<line x1="${N(px)}" y1="${N(py)}" x2="${N(qx)}" y2="${N(qy)}" stroke="#4c8dff"/>` + ci(qx, qy, 5, '#fff');
+          });
+        }
+        h += sq(px, py, sel ? '#4c8dff' : '#fff');
+      }));
+    });
+  }
+  if (S.pen) {
+    S.pen.pts.forEach((p, i) => {
+      const [px, py] = toS(p.x, p.y);
+      if (hasH(p) && i === S.pen.pts.length - 1) {
+        [[p.ix, p.iy], [p.ox, p.oy]].forEach(([hx, hy]) => { const [qx, qy] = toS(hx, hy); h += `<line x1="${N(px)}" y1="${N(py)}" x2="${N(qx)}" y2="${N(qy)}" stroke="#ff7a1a"/>` + ci(qx, qy, 4, '#fff'); });
+      }
+      h += sq(px, py, i === 0 ? '#ff7a1a' : '#fff');
+    });
+    const t = S.pen.tmp;
+    if (t) {
+      const [px, py] = toS(t.x, t.y);
+      if (hasH(t)) [[t.ix, t.iy], [t.ox, t.oy]].forEach(([hx, hy]) => { const [qx, qy] = toS(hx, hy); h += `<line x1="${N(px)}" y1="${N(py)}" x2="${N(qx)}" y2="${N(qy)}" stroke="#ff7a1a"/>` + ci(qx, qy, 4, '#fff'); });
+      h += sq(px, py, '#ff7a1a');
+    }
+  }
+  if (a && a.type === 'marquee') {
+    const x = Math.min(a.sx, a.cx), y = Math.min(a.sy, a.cy), w = Math.abs(a.cx - a.sx), hh = Math.abs(a.cy - a.sy);
+    h += `<rect x="${N(x)}" y="${N(y)}" width="${N(w)}" height="${N(hh)}" fill="rgba(76,141,255,.15)" stroke="#4c8dff" stroke-dasharray="4 3"/>`;
+  }
+  $('#ovl').innerHTML = h;
+}
+function pathDS(sub) { // path in screen coords
+  const c = JSON.parse(JSON.stringify(sub));
+  c.pts.forEach(p => { [p.x, p.y] = toS(p.x, p.y); [p.ix, p.iy] = toS(p.ix, p.iy); [p.ox, p.oy] = toS(p.ox, p.oy); });
+  return pathD(c);
+}
+
+/* ---- view helpers ---- */
+function fitView() {
+  const r = stage().getBoundingClientRect(), pad = 24;
+  const s = Math.min((r.width - pad * 2) / doc.w, (r.height - pad * 2) / doc.h);
+  S.view.s = clamp(s, 0.02, 64);
+  S.view.x = (r.width - doc.w * S.view.s) / 2; S.view.y = (r.height - doc.h * S.view.s) / 2;
+  render(); uiZoom();
+}
+function zoomAt(f, sx, sy) {
+  const r = stage().getBoundingClientRect();
+  if (sx == null) { sx = r.width / 2; sy = r.height / 2; }
+  const w = toW(sx, sy), ns = clamp(S.view.s * f, 0.02, 64);
+  S.view.s = ns; S.view.x = sx - w.x * ns; S.view.y = sy - w.y * ns;
+  render(); uiZoom();
+}
+
+/* ---- hit testing ---- */
+function pathHit(el, p, tolW) {
+  const fill = el.getAttribute('fill');
+  if (fill && fill !== 'none' && el.isPointInFill(p)) return true;
+  const sw0 = el.getAttribute('stroke-width'), st0 = el.getAttribute('stroke'), da0 = el.getAttribute('stroke-dasharray');
+  const sw = parseFloat(sw0) || 0;
+  el.setAttribute('stroke', '#000'); el.setAttribute('stroke-width', Math.max(sw, tolW * 2)); el.removeAttribute('stroke-dasharray');
+  const r = el.isPointInStroke(p);
+  if (st0 == null) el.removeAttribute('stroke'); else el.setAttribute('stroke', st0);
+  if (sw0 == null) el.removeAttribute('stroke-width'); else el.setAttribute('stroke-width', sw0);
+  if (da0 != null) el.setAttribute('stroke-dasharray', da0);
+  return r;
+}
+function objHit(o, w, tolW) {
+  if (o.type === 'text') { const b = textBox(o); return w.x >= b[0] - tolW && w.x <= b[2] + tolW && w.y >= b[1] - tolW && w.y <= b[3] + tolW; }
+  const g = $(`#content [data-id="${o.id}"]`);
+  if (!g) return false;
+  const pt = new DOMPoint(w.x, w.y);
+  return $$('path', g).some(el => pathHit(el, pt, tolW));
+}
+function hitObj(w, tolPx) {
+  const tol = (tolPx || 12) / S.view.s;
+  for (let li = doc.layers.length - 1; li >= 0; li--) {
+    const L = doc.layers[li]; if (!L.visible || L.locked) continue;
+    for (let i = L.objs.length - 1; i >= 0; i--) if (objHit(L.objs[i], w, tol)) return { o: L.objs[i], li };
+  }
+  return null;
+}
+
+/* ---- segment helpers ---- */
+function nearestSeg(o, w) {
+  let best = null;
+  o.sub.forEach((s, si) => {
+    const n = s.pts.length, segs = s.closed ? n : n - 1;
+    for (let i = 0; i < segs; i++) {
+      const a = s.pts[i], b = s.pts[(i + 1) % n];
+      for (let k = 0; k <= 40; k++) {
+        const t = k / 40, [x, y] = bez(a, b, t), d = Math.hypot(x - w.x, y - w.y);
+        if (!best || d < best.d) best = { si, i, t, d };
+      }
+    }
+  });
+  return best;
+}
+function splitSeg(sub, i, t) {
+  const n = sub.pts.length, a = sub.pts[i], b = sub.pts[(i + 1) % n];
+  const L = (p, q) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+  const p0 = [a.x, a.y], p1 = [a.ox, a.oy], p2 = [b.ix, b.iy], p3 = [b.x, b.y];
+  const p01 = L(p0, p1), p12 = L(p1, p2), p23 = L(p2, p3), p012 = L(p01, p12), p123 = L(p12, p23), m = L(p012, p123);
+  a.ox = p01[0]; a.oy = p01[1]; b.ix = p23[0]; b.iy = p23[1];
+  sub.pts.splice(i + 1, 0, { x: m[0], y: m[1], ix: p012[0], iy: p012[1], ox: p123[0], oy: p123[1], s: true });
+}
+function makeSmooth(sub, pi) {
+  const n = sub.pts.length, p = sub.pts[pi];
+  const prev = sub.pts[pi - 1] || (sub.closed ? sub.pts[n - 1] : null), next = sub.pts[pi + 1] || (sub.closed ? sub.pts[0] : null);
+  let dx, dy;
+  if (prev && next) { dx = next.x - prev.x; dy = next.y - prev.y; }
+  else if (next) { dx = next.x - p.x; dy = next.y - p.y; }
+  else if (prev) { dx = p.x - prev.x; dy = p.y - prev.y; }
+  else return;
+  const len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+  const dp = prev ? Math.hypot(p.x - prev.x, p.y - prev.y) / 3 : len / 6, dn = next ? Math.hypot(next.x - p.x, next.y - p.y) / 3 : len / 6;
+  p.ix = p.x - ux * dp; p.iy = p.y - uy * dp; p.ox = p.x + ux * dn; p.oy = p.y + uy * dn; p.s = true;
+}
+function makeCorner(p) { p.ix = p.x; p.iy = p.y; p.ox = p.x; p.oy = p.y; p.s = false; }
+
+/* ===== tools & pointer interaction ===== */
+
+/* ---- object factories ---- */
+function mkPath(sub, o) {
+  o = o || {}; const st = S.style, hasFill = o.fill !== false;
+  const stroke = st.stroke || (hasFill ? null : '#16181d');
+  return { id: nid(), type: 'path', name: o.name || 'مسیر', sub, fill: hasFill ? st.fill : null, grad: hasFill && st.grad ? { ...st.grad } : null,
+    stroke, sw: st.sw, cap: st.cap, join: st.join, dash: st.dash, op: st.op, rule: st.rule };
+}
+function addObj(o) {
+  const L = doc.layers[S.cur];
+  if (!L || L.locked || !L.visible) { toast('لایه فعال قفل یا مخفی است'); return false; }
+  L.objs.push(o); S.sel = [o.id]; S.anchors.clear(); return true;
+}
+function rectSub(x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2); const x1 = x + w, y1 = y + h;
+  if (r <= 0.01) return { closed: true, pts: [P(x, y), P(x1, y), P(x1, y1), P(x, y1)] };
+  const k = r * (1 - KAPPA), q = (px, py, ix, iy, ox, oy) => ({ x: px, y: py, ix, iy, ox, oy, s: false });
+  return { closed: true, pts: [
+    q(x + r, y, x + k, y, x + r, y), q(x1 - r, y, x1 - r, y, x1 - k, y), q(x1, y + r, x1, y + k, x1, y + r), q(x1, y1 - r, x1, y1 - r, x1, y1 - k),
+    q(x1 - r, y1, x1 - k, y1, x1 - r, y1), q(x + r, y1, x + r, y1, x + k, y1), q(x, y1 - r, x, y1 - k, x, y1 - r), q(x, y + r, x, y + r, x, y + k)] };
+}
+function ellipseSub(cx, cy, rx, ry) {
+  const kx = rx * KAPPA, ky = ry * KAPPA, q = (px, py, ix, iy, ox, oy) => ({ x: px, y: py, ix, iy, ox, oy, s: true });
+  return { closed: true, pts: [q(cx, cy - ry, cx - kx, cy - ry, cx + kx, cy - ry), q(cx + rx, cy, cx + rx, cy - ky, cx + rx, cy + ky),
+    q(cx, cy + ry, cx + kx, cy + ry, cx - kx, cy + ry), q(cx - rx, cy, cx - rx, cy + ky, cx - rx, cy - ky)] };
+}
+function polySub(cx, cy, r, n, inner, rot) {
+  const pts = [], cnt = inner ? n * 2 : n;
+  for (let i = 0; i < cnt; i++) {
+    const a = rot + i * 2 * Math.PI / cnt, rr = inner && i % 2 ? r * inner : r;
+    pts.push(P(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr));
+  }
+  return { closed: true, pts };
+}
+function mkShape(tool, a, b, con) {
+  let x0 = a.x, y0 = a.y, x1 = b.x, y1 = b.y;
+  if (tool === 'line') {
+    if (con) { const ang = Math.round(Math.atan2(y1 - y0, x1 - x0) / (Math.PI / 4)) * Math.PI / 4, d = Math.hypot(x1 - x0, y1 - y0); x1 = x0 + Math.cos(ang) * d; y1 = y0 + Math.sin(ang) * d; }
+    return mkPath([{ closed: false, pts: [P(x0, y0), P(x1, y1)] }], { fill: false, name: 'خط' });
+  }
+  if (tool === 'polygon' || tool === 'star') {
+    const r = Math.hypot(x1 - x0, y1 - y0);
+    const rot = con ? -Math.PI / 2 : Math.atan2(y1 - y0, x1 - x0);
+    return mkPath([tool === 'star' ? polySub(x0, y0, r, S.opt.points, S.opt.inner, rot) : polySub(x0, y0, r, S.opt.sides, 0, rot)], { name: tool === 'star' ? 'ستاره' : 'چندضلعی' });
+  }
+  let w = x1 - x0, h = y1 - y0;
+  if (con) { const m = Math.max(Math.abs(w), Math.abs(h)); w = (w < 0 ? -1 : 1) * m; h = (h < 0 ? -1 : 1) * m; }
+  const x = Math.min(x0, x0 + w), y = Math.min(y0, y0 + h), W = Math.abs(w), H = Math.abs(h);
+  if (tool === 'ellipse') return mkPath([ellipseSub(x + W / 2, y + H / 2, W / 2, H / 2)], { name: 'بیضی' });
+  return mkPath([rectSub(x, y, W, H, S.opt.radius)], { name: 'مستطیل' });
+}
+
+/* ---- freehand smoothing ---- */
+function rdp(pts, eps) {
+  if (pts.length < 3) return pts;
+  const [ax, ay] = pts[0], [bx, by] = pts[pts.length - 1], dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy) || 1;
+  let mx = 0, mi = 0;
+  for (let i = 1; i < pts.length - 1; i++) { const d = Math.abs(dy * pts[i][0] - dx * pts[i][1] + bx * ay - by * ax) / L; if (d > mx) { mx = d; mi = i; } }
+  if (mx > eps) { const l = rdp(pts.slice(0, mi + 1), eps), r = rdp(pts.slice(mi), eps); return l.slice(0, -1).concat(r); }
+  return [pts[0], pts[pts.length - 1]];
+}
+function fitCurve(raw, closed) {
+  let pts = raw.map((p, i) => {
+    if (i === 0 || i === raw.length - 1) return p;
+    return [(raw[i - 1][0] + p[0] + raw[i + 1][0]) / 3, (raw[i - 1][1] + p[1] + raw[i + 1][1]) / 3];
+  });
+  pts = rdp(pts, 2.2 / S.view.s);
+  const n = pts.length, out = pts.map(p => P(p[0], p[1], true));
+  out.forEach((p, i) => {
+    const prev = out[i - 1] || (closed ? out[n - 1] : null), next = out[i + 1] || (closed ? out[0] : null);
+    if (!prev || !next) {
+      makeCorner(p);
+      if (next) { p.ox = p.x + (next.x - p.x) / 3; p.oy = p.y + (next.y - p.y) / 3; }
+      else if (prev) { p.ix = p.x + (prev.x - p.x) / 3; p.iy = p.y + (prev.y - p.y) / 3; }
+      return;
+    }
+    const dx = next.x - prev.x, dy = next.y - prev.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+    const d1 = Math.hypot(p.x - prev.x, p.y - prev.y) / 3, d2 = Math.hypot(next.x - p.x, next.y - p.y) / 3;
+    p.ix = p.x - ux * d1; p.iy = p.y - uy * d1; p.ox = p.x + ux * d2; p.oy = p.y + uy * d2;
+  });
+  return { closed, pts: out };
+}
+
+/* ---- pen ---- */
+function penStart() { if (!S.pen) S.pen = { pts: [], tmp: null, closed: false }; }
+function finishPen(keep) {
+  const p = S.pen; S.pen = null;
+  if (p && keep !== false && p.pts.length >= 2) {
+    const o = mkPath([{ closed: p.closed, pts: p.pts }], { fill: p.closed });
+    if (!p.closed) { o.fill = null; o.grad = null; }
+    if (addObj(o)) commit();
+  }
+  render(); uiRefresh();
+}
+function penUndoPoint() { if (S.pen) { S.pen.pts.pop(); if (!S.pen.pts.length) S.pen = null; render(); uiRefresh(); } }
+
+/* ---- selection helpers ---- */
+function setSel(ids, keepAnch) {
+  S.sel = ids; if (!keepAnch) S.anchors.clear();
+  if (ids.length) { const r = findObj(ids[0]); if (r) S.cur = r.li; }
+  syncStyleFromSel(); uiRefresh();
+}
+function syncStyleFromSel() {
+  const o = selObjs()[0]; if (!o) return;
+  let p = o; while (p && p.type === 'group') p = p.children[0];
+  if (!p) return;
+  const st = S.style;
+  st.fill = p.fill || null; st.grad = p.grad ? { ...p.grad } : null; st.stroke = p.stroke || null;
+  if (p.sw != null) st.sw = p.sw;
+  if (p.cap) st.cap = p.cap; if (p.join) st.join = p.join; if (p.dash) st.dash = p.dash; if (p.rule) st.rule = p.rule;
+  st.op = o.op != null ? o.op : 1;
+  if (p.type === 'text') { S.opt.size = p.size; S.opt.font = p.font; S.opt.bold = !!p.bold; S.opt.italic = !!p.italic; }
+}
+function lockedIds() { return new Set(doc.layers.filter(l => l.locked).flatMap(l => l.objs.map(o => o.id))); }
+
+/* ---- pointer plumbing ---- */
+const ptrs = new Map();
+let pinch = null, pinching = false, startDoc = null;
+const HIT = 22;
+
+function installPointer() {
+  const st = stage();
+  const pos = e => { const r = st.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  st.addEventListener('pointerdown', e => {
+    e.preventDefault(); try { st.setPointerCapture(e.pointerId); } catch (x) { }
+    ptrs.set(e.pointerId, pos(e));
+    if (ptrs.size === 2) { cancelAct(); pinching = true; const [a, b] = [...ptrs.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, v: { ...S.view } }; return; }
+    if (ptrs.size > 2 || pinching) return;
+    startDoc = null; onDown(pos(e), e);
+  });
+  st.addEventListener('pointermove', e => {
+    if (!ptrs.has(e.pointerId)) return;
+    ptrs.set(e.pointerId, pos(e));
+    if (pinching) {
+      if (ptrs.size >= 2 && pinch) {
+        const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y) || 1, cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+        const s = clamp(pinch.v.s * d / pinch.d, 0.02, 64), wx = (pinch.cx - pinch.v.x) / pinch.v.s, wy = (pinch.cy - pinch.v.y) / pinch.v.s;
+        S.view.s = s; S.view.x = cx - wx * s; S.view.y = cy - wy * s; render(); uiZoom();
+      }
+      return;
+    }
+    onMove(pos(e), e);
+  });
+  const up = e => {
+    if (!ptrs.has(e.pointerId)) return;
+    const was = pinching; ptrs.delete(e.pointerId);
+    if (was) { if (ptrs.size === 0) { pinching = false; pinch = null; } return; }
+    onUp(pos(e), e);
+  };
+  st.addEventListener('pointerup', up); st.addEventListener('pointercancel', up);
+  st.addEventListener('wheel', e => { e.preventDefault(); const p = pos(e); zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, p.x, p.y); }, { passive: false });
+}
+function cancelAct() {
+  if (startDoc) { doc = JSON.parse(startDoc); S.sel = S.sel.filter(id => findObj(id)); }
+  S.act = null; S.draft = null; if (S.pen) S.pen.tmp = null;
+  startDoc = null; render();
+}
+
+/* ---- hit helpers for anchors ---- */
+function anchorHit(sp, objs, wantHandles) {
+  for (let k = objs.length - 1; k >= 0; k--) {
+    const o = objs[k]; if (o.type !== 'path') continue;
+    for (let si = 0; si < o.sub.length; si++) {
+      const pts = o.sub[si].pts;
+      for (let pi = pts.length - 1; pi >= 0; pi--) {
+        const p = pts[pi], key = `${o.id}|${si}|${pi}`;
+        if (wantHandles && S.anchors.has(key)) {
+          for (const [kind, hx, hy] of [['out', p.ox, p.oy], ['in', p.ix, p.iy]]) {
+            if (hx === p.x && hy === p.y) continue;
+            const [qx, qy] = toS(hx, hy); if (Math.hypot(qx - sp.x, qy - sp.y) < HIT) return { kind, o, si, pi, key };
+          }
+        }
+      }
+      for (let pi = pts.length - 1; pi >= 0; pi--) {
+        const p = pts[pi], [qx, qy] = toS(p.x, p.y);
+        if (Math.hypot(qx - sp.x, qy - sp.y) < HIT) return { kind: 'a', o, si, pi, key: `${o.id}|${si}|${pi}` };
+      }
+    }
+  }
+  return null;
+}
+function allPathObjs() { const out = []; doc.layers.forEach(L => { if (L.visible && !L.locked) L.objs.forEach(o => { if (o.type === 'path') out.push(o); }); }); return out; }
+
+/* ---- DOWN ---- */
+function onDown(sp, e) {
+  const w = toW(sp.x, sp.y), t = S.tool, con = S.constrain;
+  S.act = { sx: sp.x, sy: sp.y, cx: sp.x, cy: sp.y, start: w, moved: false, last: w };
+  const A = S.act;
+  if (t === 'hand') { A.type = 'pan'; A.v = { ...S.view }; return; }
+  if (t === 'select') {
+    const objs = selObjs();
+    if (objs.length) {
+      const b = selBox();
+      if (b) {
+        const [tx, ty] = toS((b[0] + b[2]) / 2, b[1]);
+        if (Math.hypot(sp.x - tx, sp.y - (ty - 30)) < HIT) {
+          startDoc = JSON.stringify(doc); A.type = 'rotate'; A.cl = objs.map(clone); A.c = { x: (b[0] + b[2]) / 2, y: (b[1] + b[3]) / 2 };
+          A.a0 = Math.atan2(w.y - A.c.y, w.x - A.c.x); return;
+        }
+        for (const hd of handleList(b)) {
+          const [px, py] = toS(hd[1], hd[2]);
+          if (Math.hypot(sp.x - px, sp.y - py) < HIT) { startDoc = JSON.stringify(doc); A.type = 'scale'; A.h = hd[0]; A.b = b; A.cl = objs.map(clone); return; }
+        }
+      }
+    }
+    const hit = hitObj(w, 14);
+    if (hit) {
+      if (S.multi) {
+        if (S.sel.includes(hit.o.id)) { setSel(S.sel.filter(i => i !== hit.o.id)); S.act = null; render(); return; }
+        setSel(S.sel.concat(hit.o.id));
+      } else if (!S.sel.includes(hit.o.id)) setSel([hit.o.id]);
+      startDoc = JSON.stringify(doc); A.type = 'move'; A.dx = 0; A.dy = 0; A.b0 = selBox(); render(); return;
+    }
+    if (!S.multi) setSel([]);
+    A.type = 'marquee'; render(); return;
+  }
+  if (t === 'direct') {
+    const objs = selObjs().filter(o => o.type === 'path');
+    const h = anchorHit(sp, objs, true);
+    if (h) {
+      startDoc = JSON.stringify(doc);
+      if (h.kind === 'a') {
+        if (!S.anchors.has(h.key)) { if (!S.multi) S.anchors.clear(); S.anchors.add(h.key); }
+        else if (S.multi) { S.anchors.delete(h.key); S.act = null; render(); uiRefresh(); return; }
+        A.type = 'anchor'; A.lastW = w; A.base = S.snap ? { x: h.o.sub[h.si].pts[h.pi].x, y: h.o.sub[h.si].pts[h.pi].y } : null; A.tot = { x: 0, y: 0 };
+      } else { A.type = 'handle'; A.h = h; }
+      render(); uiRefresh(); return;
+    }
+    const hit = hitObj(w, 14);
+    if (hit && hit.o.type === 'path') {
+      const wasSel = S.sel.includes(hit.o.id);
+      if (!wasSel) { setSel([hit.o.id]); }
+      const ns = nearestSeg(hit.o, w);
+      if (wasSel && ns && ns.d * S.view.s < 18) { startDoc = JSON.stringify(doc); A.type = 'seg'; A.o = hit.o; A.ns = ns; A.cl = clone(hit.o); }
+      else { startDoc = JSON.stringify(doc); A.type = 'move'; A.dx = 0; A.dy = 0; A.b0 = selBox(); }
+      render(); return;
+    }
+    if (hit && hit.o.type === 'group') toast('گروه را با «خروج از گروه» باز کنید تا نقاط قابل ویرایش شوند');
+    A.type = 'marquee'; if (!S.multi) { S.anchors.clear(); } render(); return;
+  }
+  if (t === 'pen') {
+    penStart(); const p = snapPt(w), pen = S.pen;
+    if (pen.pts.length >= 2) { const f0 = pen.pts[0], [fx, fy] = toS(f0.x, f0.y); if (Math.hypot(fx - sp.x, fy - sp.y) < HIT) { A.type = 'penclose'; render(); return; } }
+    A.type = 'pen'; pen.tmp = P(p.x, p.y); render(); return;
+  }
+  if (t === 'addpt') {
+    let objs = selObjs().filter(o => o.type === 'path'); if (!objs.length) { const h = hitObj(w, 20); if (h && h.o.type === 'path') { setSel([h.o.id]); objs = [h.o]; } }
+    let best = null; objs.forEach(o => { const ns = nearestSeg(o, w); if (ns && (!best || ns.d < best.ns.d)) best = { o, ns }; });
+    if (best && best.ns.d * S.view.s < 26) {
+      splitSeg(best.o.sub[best.ns.si], best.ns.i, clamp(best.ns.t, 0.02, 0.98)); S.anchors.clear();
+      const pi = best.ns.i + 1; S.anchors.add(`${best.o.id}|${best.ns.si}|${pi}`); commit(); render();
+    }
+    S.act = null; return;
+  }
+  if (t === 'delpt' || t === 'convert') {
+    const objs = selObjs().filter(o => o.type === 'path'); let h = anchorHit(sp, objs, false);
+    if (!h) { const o2 = allPathObjs(); h = anchorHit(sp, o2, false); if (h) setSel([h.o.id]); }
+    if (!h) { S.act = null; return; }
+    if (t === 'delpt') { deleteAnchor(h.o, h.si, h.pi); commit(); render(); S.act = null; return; }
+    startDoc = JSON.stringify(doc); A.type = 'convert'; A.h = h; render(); return;
+  }
+  if (t === 'pencil') { A.type = 'pencil'; A.pts = [[w.x, w.y]]; return; }
+  if (['line', 'rect', 'ellipse', 'polygon', 'star'].includes(t)) { A.type = 'shape'; A.a = snapPt(w); return; }
+  if (t === 'text') {
+    const hit = hitObj(w, 10); S.act = null;
+    if (hit && hit.o.type === 'text') { setSel([hit.o.id]); askText(hit.o.text, v => { if (v == null) return; hit.o.text = v; commit(); render(); }); return; }
+    const p = snapPt(w);
+    askText('', v => {
+      if (!v) return;
+      const st = S.style;
+      const o = { id: nid(), type: 'text', name: 'متن', x: p.x, y: p.y + S.opt.size * 0.95, text: v, size: S.opt.size, font: S.opt.font, bold: S.opt.bold, italic: S.opt.italic, rot: 0, fill: st.fill || '#16181d', grad: null, stroke: null, sw: 0, op: st.op };
+      if (addObj(o)) { commit(); render(); }
+    }); return;
+  }
+  if (t === 'eyedrop') {
+    const hit = hitObj(w, 12); S.act = null;
+    if (hit) { setSel([hit.o.id]); syncStyleFromSel(); uiRefresh(true); toast('سبک برداشته شد'); render(); }
+  }
+}
+
+/* ---- MOVE ---- */
+function onMove(sp, e) {
+  const A = S.act; if (!A) return;
+  A.cx = sp.x; A.cy = sp.y;
+  if (Math.hypot(sp.x - A.sx, sp.y - A.sy) > 3) A.moved = true;
+  const w = toW(sp.x, sp.y), con = S.constrain;
+  switch (A.type) {
+    case 'pan': S.view.x = A.v.x + (sp.x - A.sx); S.view.y = A.v.y + (sp.y - A.sy); render(); return;
+    case 'marquee': drawOverlay(); return;
+    case 'move': {
+      if (!A.moved) return;
+      let dx = w.x - A.start.x, dy = w.y - A.start.y;
+      if (con) { if (Math.abs(dx) > Math.abs(dy)) dy = 0; else dx = 0; }
+      if (S.snap && A.b0) { dx = sn(A.b0[0] + dx) - A.b0[0]; dy = sn(A.b0[1] + dy) - A.b0[1]; }
+      const m = mTrans(dx - A.dx, dy - A.dy); A.dx = dx; A.dy = dy;
+      selObjs().forEach(o => mapObj(o, m)); render(); return;
+    }
+    case 'scale': {
+      const [x0, y0, x1, y1] = A.b, h = A.h, ax = h.includes('w') ? x1 : x0, ay = h.includes('n') ? y1 : y0;
+      const hx = h.includes('w') ? x0 : h.includes('e') ? x1 : null, hy = h.includes('n') ? y0 : h.includes('s') ? y1 : null;
+      let sx = hx == null || Math.abs(hx - ax) < 1e-6 ? 1 : (w.x - ax) / (hx - ax), sy = hy == null || Math.abs(hy - ay) < 1e-6 ? 1 : (w.y - ay) / (hy - ay);
+      if (hx != null && hy != null && con) { const s = Math.max(Math.abs(sx), Math.abs(sy)); sx = (sx < 0 ? -1 : 1) * s; sy = (sy < 0 ? -1 : 1) * s; }
+      else if (hx != null && hy == null && con) sy = sx; else if (hy != null && hx == null && con) sx = sy;
+      const fix = v => Math.abs(v) < 0.01 ? (v < 0 ? -0.01 : 0.01) : v; sx = fix(sx); sy = fix(sy);
+      const m = M(sx, 0, 0, sy, ax * (1 - sx), ay * (1 - sy));
+      A.cl.forEach(c => { const k = clone(c); mapObj(k, m); const r = findObj(k.id); if (r) r.arr[r.idx] = k; }); render(); return;
+    }
+    case 'rotate': {
+      let d = (Math.atan2(w.y - A.c.y, w.x - A.c.x) - A.a0) * 180 / Math.PI;
+      if (con) d = Math.round(d / 15) * 15;
+      const m = mRotAt(d, A.c.x, A.c.y);
+      A.cl.forEach(c => { const k = clone(c); mapObj(k, m); const r = findObj(k.id); if (r) r.arr[r.idx] = k; }); render(); return;
+    }
+    case 'anchor': {
+      if (!A.moved) return;
+      let dx = w.x - A.lastW.x, dy = w.y - A.lastW.y;
+      if (S.snap && A.base) { const tx = w.x - A.start.x + A.base.x, ty = w.y - A.start.y + A.base.y; const nx = sn(tx) - A.base.x, ny = sn(ty) - A.base.y; dx = nx - A.tot.x; dy = ny - A.tot.y; A.tot = { x: nx, y: ny }; A.lastW = w; }
+      else A.lastW = w;
+      S.anchors.forEach(k => { const [id, si, pi] = k.split('|'), r = findObj(id); if (!r) return; const p = r.o.sub[+si].pts[+pi]; p.x += dx; p.y += dy; p.ix += dx; p.iy += dy; p.ox += dx; p.oy += dy; });
+      render(); return;
+    }
+    case 'handle': {
+      if (!A.moved) return;
+      const { kind, o, si, pi } = A.h, p = o.sub[si].pts[pi], q = snapPt(w);
+      const mine = kind === 'out' ? ['ox', 'oy'] : ['ix', 'iy'], oth = kind === 'out' ? ['ix', 'iy'] : ['ox', 'oy'];
+      p[mine[0]] = q.x; p[mine[1]] = q.y;
+      if (p.s) {
+        const d = Math.hypot(q.x - p.x, q.y - p.y) || 1; let len = Math.hypot(p[oth[0]] - p.x, p[oth[1]] - p.y); if (!len) len = d;
+        p[oth[0]] = p.x - (q.x - p.x) / d * len; p[oth[1]] = p.y - (q.y - p.y) / d * len;
+      }
+      render(); return;
+    }
+    case 'seg': {
+      if (!A.moved) return;
+      const r = findObj(A.o.id); if (!r) return;
+      const c = clone(A.cl), { si, i } = A.ns, t = clamp(A.ns.t, 0.15, 0.85), dx = w.x - A.start.x, dy = w.y - A.start.y, f = 1 / (3 * t * (1 - t));
+      const sub = c.sub[si], n = sub.pts.length, a = sub.pts[i], b = sub.pts[(i + 1) % n];
+      a.ox += dx * f; a.oy += dy * f; b.ix += dx * f; b.iy += dy * f; a.s = false; b.s = false;
+      r.arr[r.idx] = c; render(); return;
+    }
+    case 'pen': {
+      const pen = S.pen; if (!pen || !pen.tmp) return; const t = pen.tmp;
+      if (Math.hypot(sp.x - A.sx, sp.y - A.sy) > 4) { const q = snapPt(w); t.ox = q.x; t.oy = q.y; t.ix = 2 * t.x - q.x; t.iy = 2 * t.y - q.y; t.s = true; }
+      render(); return;
+    }
+    case 'penclose': {
+      const f0 = S.pen.pts[0]; if (Math.hypot(sp.x - A.sx, sp.y - A.sy) > 4) { f0.ox = w.x; f0.oy = w.y; f0.ix = 2 * f0.x - w.x; f0.iy = 2 * f0.y - w.y; f0.s = true; }
+      render(); return;
+    }
+    case 'convert': {
+      if (!A.moved) return; const { o, si, pi } = A.h, p = o.sub[si].pts[pi];
+      p.ox = w.x; p.oy = w.y; p.ix = 2 * p.x - w.x; p.iy = 2 * p.y - w.y; p.s = true; render(); return;
+    }
+    case 'pencil': {
+      const l = A.pts[A.pts.length - 1]; if (Math.hypot(w.x - l[0], w.y - l[1]) * S.view.s < 2) return;
+      A.pts.push([w.x, w.y]);
+      S.draft = { id: 'draft', type: 'path', sub: [{ closed: false, pts: A.pts.map(p => P(p[0], p[1])) }], fill: null, grad: null, stroke: S.style.stroke || '#16181d', sw: S.style.sw, cap: 'round', join: 'round', dash: 'none', op: 1, rule: 'nonzero' };
+      render(); return;
+    }
+    case 'shape': {
+      if (!A.moved) return; S.draft = mkShape(S.tool, A.a, snapPt(w), con); render(); return;
+    }
+  }
+}
+
+/* ---- UP ---- */
+function onUp(sp, e) {
+  const A = S.act; if (!A) return; S.act = null;
+  const w = toW(sp.x, sp.y);
+  switch (A.type) {
+    case 'marquee': {
+      const x0 = Math.min(A.sx, sp.x), y0 = Math.min(A.sy, sp.y), x1 = Math.max(A.sx, sp.x), y1 = Math.max(A.sy, sp.y);
+      if (!A.moved) { render(); return; }
+      const a = toW(x0, y0), b = toW(x1, y1);
+      if (S.tool === 'direct') {
+        selObjs().forEach(o => { if (o.type !== 'path') return; o.sub.forEach((s, si) => s.pts.forEach((p, pi) => { if (p.x >= a.x && p.x <= b.x && p.y >= a.y && p.y <= b.y) S.anchors.add(`${o.id}|${si}|${pi}`); })); });
+        if (!S.sel.length) { /* select objects touched */
+          const ids = []; doc.layers.forEach(L => { if (L.visible && !L.locked) L.objs.forEach(o => { const bb = bbox(o); if (o.type === 'path' && bb[2] >= a.x && bb[0] <= b.x && bb[3] >= a.y && bb[1] <= b.y) ids.push(o.id); }); });
+          setSel(ids, true);
+          selObjs().forEach(o => o.sub.forEach((s, si) => s.pts.forEach((p, pi) => { if (p.x >= a.x && p.x <= b.x && p.y >= a.y && p.y <= b.y) S.anchors.add(`${o.id}|${si}|${pi}`); })));
+        }
+        uiRefresh(); render(); return;
+      }
+      const ids = S.multi ? S.sel.slice() : [];
+      doc.layers.forEach(L => { if (L.visible && !L.locked) L.objs.forEach(o => { const bb = bbox(o); if (bb[2] >= a.x && bb[0] <= b.x && bb[3] >= a.y && bb[1] <= b.y && !ids.includes(o.id)) ids.push(o.id); }); });
+      setSel(ids); render(); return;
+    }
+    case 'move': case 'scale': case 'rotate': case 'anchor': case 'handle': case 'seg':
+      if (A.moved) { commit(); } startDoc = null; render(); return;
+    case 'convert': {
+      const { o, si, pi } = A.h, p = o.sub[si].pts[pi];
+      if (!A.moved) { if (p.s || hasH(p)) makeCorner(p); else makeSmooth(o.sub[si], pi); }
+      S.anchors.clear(); S.anchors.add(A.h.key); commit(); render(); return;
+    }
+    case 'pen': {
+      const pen = S.pen; if (pen && pen.tmp) { pen.pts.push(pen.tmp); pen.tmp = null; }
+      render(); uiRefresh(); return;
+    }
+    case 'penclose': { S.pen.closed = true; finishPen(); return; }
+    case 'pencil': {
+      S.draft = null;
+      if (A.pts.length > 2) {
+        const f0 = A.pts[0], l = A.pts[A.pts.length - 1], closed = Math.hypot(f0[0] - l[0], f0[1] - l[1]) * S.view.s < 16 && A.pts.length > 6;
+        const o = mkPath([fitCurve(closed ? A.pts.slice(0, -1) : A.pts, closed)], { fill: false, name: 'مداد' });
+        if (addObj(o)) commit();
+      }
+      render(); uiRefresh(); return;
+    }
+    case 'shape': {
+      S.draft = null; let o;
+      if (!A.moved) {
+        const c = A.a, sz = 100 / S.view.s, rad = S.tool === 'polygon' || S.tool === 'star';
+        o = rad ? mkShape(S.tool, c, { x: c.x, y: c.y - sz / 2 }, true)
+          : mkShape(S.tool, { x: c.x - sz / 2, y: c.y - sz / 2 }, { x: c.x + sz / 2, y: c.y + sz / 2 }, false);
+      } else o = mkShape(S.tool, A.a, snapPt(w), S.constrain);
+      if (addObj(o)) commit();
+      render(); uiRefresh(); return;
+    }
+    case 'pan': return;
+  }
+}
+
+function deleteAnchor(o, si, pi) {
+  const s = o.sub[si]; s.pts.splice(pi, 1);
+  if (s.pts.length < 2 && !(s.pts.length === 1 && false)) { if (s.pts.length < 2) o.sub.splice(si, 1); }
+  if (!o.sub.length) { const r = findObj(o.id); if (r) r.arr.splice(r.idx, 1); S.sel = S.sel.filter(i => i !== o.id); }
+  S.anchors.clear();
+}
+
+/* ---- commands ---- */
+function setTool(t) {
+  if (S.tool === 'pen' && t !== 'pen') finishPen();
+  S.tool = t; S.act = null; if (t !== 'direct' && !['addpt', 'delpt', 'convert'].includes(t)) S.anchors.clear();
+  if (t === 'text' || t === 'rect' || t === 'polygon' || t === 'star') { if (!S.panel) { /* keep */ } }
+  uiRefresh(true); render();
+}
+function deleteSel() {
+  if (S.tool === 'direct' && S.anchors.size) { deleteSelAnchors(); return; }
+  const ids = new Set(S.sel); if (!ids.size) return;
+  doc.layers.forEach(L => { if (!L.locked) L.objs = L.objs.filter(o => !ids.has(o.id)); });
+  S.sel = []; S.anchors.clear(); commit(); render();
+}
+function deleteSelAnchors() {
+  const list = [...S.anchors].map(k => k.split('|')).map(([id, si, pi]) => ({ id, si: +si, pi: +pi })).sort((a, b) => b.pi - a.pi);
+  list.forEach(({ id, si, pi }) => { const r = findObj(id); if (r && r.o.sub[si]) deleteAnchor(r.o, si, pi); });
+  S.anchors.clear(); commit(); render(); uiRefresh();
+}
+function toggleSmoothSel() {
+  [...S.anchors].forEach(k => { const [id, si, pi] = k.split('|'), r = findObj(id); if (!r) return; const p = r.o.sub[+si].pts[+pi]; if (p.s || hasH(p)) makeCorner(p); else makeSmooth(r.o.sub[+si], +pi); });
+  commit(); render();
+}
+function duplicateSel(off) {
+  const objs = selObjs(); if (!objs.length) return; const L = doc.layers[S.cur]; if (L.locked) return;
+  const ids = [];
+  objs.forEach(o => { const c = cloneObj(o); mapObj(c, mTrans(off == null ? 20 : off, off == null ? 20 : off)); const r = findObj(o.id); doc.layers[r.li].objs.splice(r.idx + 1, 0, c); ids.push(c.id); });
+  setSel(ids); commit(); render();
+}
+function copySel() { const o = selObjs(); if (o.length) { S.clip = clone(o); toast('کپی شد'); } }
+function pasteClip() {
+  if (!S.clip) return; const L = doc.layers[S.cur]; if (L.locked) return; const ids = [];
+  S.clip.forEach(o => { const c = cloneObj(o); mapObj(c, mTrans(20, 20)); L.objs.push(c); ids.push(c.id); });
+  S.clip = S.clip.map(o => { const c = clone(o); mapObj(c, mTrans(20, 20)); return c; });
+  setSel(ids); commit(); render();
+}
+function groupSel() {
+  const objs = selObjs(); if (objs.length < 2) return;
+  const r0 = findObj(objs[objs.length - 1].id), ids = new Set(objs.map(o => o.id));
+  const members = []; doc.layers[r0.li].objs.forEach(o => { if (ids.has(o.id)) members.push(o); });
+  const g = { id: nid(), type: 'group', name: 'گروه', op: 1, children: members.map(clone) };
+  doc.layers[r0.li].objs = doc.layers[r0.li].objs.filter(o => !ids.has(o.id)); doc.layers[r0.li].objs.push(g);
+  setSel([g.id]); commit(); render();
+}
+function ungroupSel() {
+  const ids = []; selObjs().forEach(o => {
+    if (o.type !== 'group') { ids.push(o.id); return; }
+    const r = findObj(o.id); r.arr.splice(r.idx, 1, ...o.children); o.children.forEach(c => ids.push(c.id));
+  });
+  setSel(ids); commit(); render();
+}
+function compoundSel() {
+  const objs = selObjs().filter(o => o.type === 'path'); if (objs.length < 2) { toast('حداقل دو مسیر انتخاب کنید'); return; }
+  const base = clone(objs[objs.length - 1]); base.id = nid(); base.name = 'مسیر مرکب'; base.sub = objs.flatMap(o => clone(o.sub)); base.rule = 'evenodd';
+  const ids = new Set(objs.map(o => o.id)), r = findObj(objs[objs.length - 1].id), li = r.li;
+  doc.layers[li].objs = doc.layers[li].objs.filter(o => !ids.has(o.id)); doc.layers[li].objs.push(base);
+  setSel([base.id]); commit(); render();
+}
+function releaseSel() {
+  const ids = []; selObjs().forEach(o => {
+    if (o.type !== 'path' || o.sub.length < 2) { ids.push(o.id); return; }
+    const r = findObj(o.id), parts = o.sub.map(s => { const c = clone(o); c.id = nid(); c.sub = [s]; c.rule = 'nonzero'; c.name = 'مسیر'; return c; });
+    r.arr.splice(r.idx, 1, ...parts); parts.forEach(p => ids.push(p.id));
+  });
+  setSel(ids); commit(); render();
+}
+function closeOpenSel() { selObjs().forEach(o => { if (o.type === 'path') o.sub.forEach(s => { if (s.pts.length > 2) s.closed = true; }); }); commit(); render(); }
+function reverseSel() { selObjs().forEach(o => { if (o.type === 'path') o.sub.forEach(s => { s.pts.reverse(); s.pts.forEach(p => { [p.ix, p.ox] = [p.ox, p.ix]; [p.iy, p.oy] = [p.oy, p.iy]; }); }); }); commit(); render(); }
+function arrange(mode) {
+  const ids = new Set(S.sel); if (!ids.size) return;
+  doc.layers.forEach(L => {
+    const arr = L.objs, pick = arr.filter(o => ids.has(o.id)); if (!pick.length) return;
+    if (mode === 'front') L.objs = arr.filter(o => !ids.has(o.id)).concat(pick);
+    else if (mode === 'back') L.objs = pick.concat(arr.filter(o => !ids.has(o.id)));
+    else if (mode === 'fwd') { for (let i = arr.length - 2; i >= 0; i--) if (ids.has(arr[i].id) && !ids.has(arr[i + 1].id)) [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]]; }
+    else if (mode === 'bwd') { for (let i = 1; i < arr.length; i++) if (ids.has(arr[i].id) && !ids.has(arr[i - 1].id)) [arr[i], arr[i - 1]] = [arr[i - 1], arr[i]]; }
+  });
+  commit(); render();
+}
+function align(mode, toBoard) {
+  const objs = selObjs(); if (!objs.length) return;
+  const bs = objs.map(bbox), ref = toBoard || objs.length === 1 ? [0, 0, doc.w, doc.h] : unionBox(bs);
+  if (mode === 'dh' || mode === 'dv') {
+    if (objs.length < 3) { toast('برای توزیع حداقل ۳ شیء لازم است'); return; }
+    const i = mode === 'dh' ? 0 : 1, order = objs.map((o, k) => ({ o, b: bs[k] })).sort((a, b) => a.b[i] - b.b[i]);
+    const first = order[0].b[i], last = order[order.length - 1].b[i], step = (last - first) / (order.length - 1);
+    order.forEach((e, k) => { const d = first + step * k - e.b[i]; mapObj(e.o, mode === 'dh' ? mTrans(d, 0) : mTrans(0, d)); });
+  } else objs.forEach((o, k) => {
+    const b = bs[k]; let dx = 0, dy = 0;
+    if (mode === 'l') dx = ref[0] - b[0]; if (mode === 'r') dx = ref[2] - b[2]; if (mode === 'c') dx = (ref[0] + ref[2]) / 2 - (b[0] + b[2]) / 2;
+    if (mode === 't') dy = ref[1] - b[1]; if (mode === 'b') dy = ref[3] - b[3]; if (mode === 'm') dy = (ref[1] + ref[3]) / 2 - (b[1] + b[3]) / 2;
+    mapObj(o, mTrans(dx, dy));
+  });
+  commit(); render();
+}
+function transformSel(m) { selObjs().forEach(o => mapObj(o, m)); commit(); render(); uiRefresh(true); }
+
+/* ---- style application ---- */
+function eachPaint(o, fn) { if (o.type === 'group') o.children.forEach(c => eachPaint(c, fn)); else fn(o); }
+function applyStyle(patch, topOnly) {
+  selObjs().forEach(o => {
+    if (patch.op !== undefined) o.op = patch.op;
+    const p = { ...patch }; delete p.op;
+    if (Object.keys(p).length) eachPaint(o, x => { Object.assign(x, p); if (x.type === 'text') { if (p.fill !== undefined && !p.fill) x.fill = '#16181d'; } });
+  });
+}
+function setStyle(patch, final) {
+  Object.assign(S.style, patch);
+  applyStyle(patch); render();
+  if (final) commit();
+}
+
+/* ===== UI: toolbar, panels, modals ===== */
+const ICON = {
+  select: '<path d="M6 3l12 9-5 1 3 6-3 1.5-3-6-4 3z" fill="currentColor"/>',
+  direct: '<path d="M6 3l12 9-5 1 3 6-3 1.5-3-6-4 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+  pen: '<path d="M12 3l6 9-6 5-6-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 17v4M9 21.5h6" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="12" cy="10.5" r="1.4" fill="currentColor"/>',
+  addpt: '<path d="M3 19c6-14 12-14 18 0" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2.2" fill="currentColor"/><path d="M18 3v6M15 6h6" stroke="currentColor" stroke-width="1.8"/>',
+  delpt: '<path d="M3 19c6-14 12-14 18 0" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2.2" fill="currentColor"/><path d="M15 6h6" stroke="currentColor" stroke-width="1.8"/>',
+  convert: '<path d="M4 19L12 5l8 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="5" r="2" fill="currentColor"/>',
+  pencil: '<path d="M4 20l1-4L16 5l3 3L8 19z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 7l3 3" stroke="currentColor" stroke-width="1.8"/>',
+  line: '<path d="M5 19L19 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  rect: '<rect x="4" y="6" width="16" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+  ellipse: '<ellipse cx="12" cy="12" rx="8" ry="6" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+  polygon: '<path d="M12 3l8 6-3 10H7L4 9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+  star: '<path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.2-5.6-3-5.6 3 1.2-6.2L3 9.6l6.3-.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  text: '<path d="M5 6V4h14v2M12 4v16M9 20h6" fill="none" stroke="currentColor" stroke-width="1.9"/>',
+  eyedrop: '<path d="M15 4l5 5-3 1-1-1-8 8-3 1 1-3 8-8-1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  hand: '<path d="M8 13V6.5a1.5 1.5 0 013 0V11V4.5a1.5 1.5 0 013 0V11V6.5a1.5 1.5 0 013 0V15c0 3.5-2.5 6-6 6-3 0-4.5-1.8-5.8-4l-2-3.3a1.4 1.4 0 012.3-1.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  undo: '<path d="M9 7L4 12l5 5M4 12h10a6 6 0 010 12" fill="none" stroke="currentColor" stroke-width="2" transform="translate(0 -3)"/>',
+  redo: '<path d="M15 7l5 5-5 5M20 12H10a6 6 0 000 12" fill="none" stroke="currentColor" stroke-width="2" transform="translate(0 -3)"/>',
+  grid: '<path d="M4 4h16v16H4zM4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16" fill="none" stroke="currentColor" stroke-width="1.4"/>'
+};
+const ic = k => `<svg viewBox="0 0 24 24" width="22" height="22">${ICON[k]}</svg>`;
+const TOOLS = [['select', 'انتخاب'], ['direct', 'مستقیم'], ['pen', 'قلم'], ['addpt', 'افزودن نقطه'], ['delpt', 'حذف نقطه'], ['convert', 'تبدیل نقطه'], ['pencil', 'مداد'],
+  ['line', 'خط'], ['rect', 'مستطیل'], ['ellipse', 'بیضی'], ['polygon', 'چندضلعی'], ['star', 'ستاره'], ['text', 'متن'], ['eyedrop', 'قطره‌چکان'], ['hand', 'دست']];
+const TABS = [['style', 'سبک'], ['layers', 'لایه‌ها'], ['arrange', 'چیدمان'], ['xform', 'تبدیل'], ['page', 'صفحه'], ['export', 'خروجی']];
+const SWATCHES = ['#000000', '#ffffff', '#6b7280', '#d1d5db', '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#4c8dff', '#6366f1', '#8b5cf6', '#d946ef', '#ec4899', '#f43f5e', '#7c2d12', '#78350f', '#1e3a8a', '#064e3b', '#fde68a'];
+
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2200); }
+
+/* ---- modal ---- */
+function showModal(html, ready) {
+  const m = $('#modal'); m.innerHTML = `<div class="mbox">${html}</div>`; m.classList.add('show');
+  const close = () => { m.classList.remove('show'); m.innerHTML = ''; };
+  m.onclick = e => { if (e.target === m) close(); };
+  ready && ready(close); return close;
+}
+function askText(init, cb) {
+  showModal(`<h3>متن</h3><textarea id="mt" rows="4" dir="auto" placeholder="متن را بنویسید…">${esc(init || '')}</textarea><div class="mrow"><button id="mc">انصراف</button><button id="mo" class="pri">تأیید</button></div>`, close => {
+    const t = $('#mt'); setTimeout(() => t.focus(), 50);
+    $('#mc').onclick = () => { close(); cb(null); }; $('#mo').onclick = () => { const v = t.value; close(); cb(v); };
+  });
+}
+function askInput(title, init, cb) {
+  showModal(`<h3>${esc(title)}</h3><input id="mt" type="text" dir="auto" value="${esc(init || '')}"><div class="mrow"><button id="mc">انصراف</button><button id="mo" class="pri">تأیید</button></div>`, close => {
+    const t = $('#mt'); setTimeout(() => { t.focus(); t.select(); }, 50);
+    $('#mc').onclick = close; $('#mo').onclick = () => { const v = t.value; close(); cb(v); };
+  });
+}
+function confirmBox(msg, cb) {
+  showModal(`<h3>${esc(msg)}</h3><div class="mrow"><button id="mc">انصراف</button><button id="mo" class="pri">بله</button></div>`, close => { $('#mc').onclick = close; $('#mo').onclick = () => { close(); cb(); }; });
+}
+
+/* ---- build static UI ---- */
+function buildUI() {
+  $('#tools').innerHTML = TOOLS.map(([k, n]) => `<button class="tool" data-tool="${k}">${ic(k)}<span>${n}</span></button>`).join('');
+  $('#tabs').innerHTML = TABS.map(([k, n]) => `<button class="tab" data-tab="${k}">${n}</button>`).join('');
+  $('#tools').onclick = e => { const b = e.target.closest('[data-tool]'); if (b) setTool(b.dataset.tool); };
+  $('#tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (!b) return; S.panel = S.panel === b.dataset.tab ? null : b.dataset.tab; uiRefresh(true); setTimeout(() => { if (S.panelChanged) { } }, 0); };
+  $('#bUndo').innerHTML = ic('undo'); $('#bRedo').innerHTML = ic('redo'); $('#bGrid').innerHTML = ic('grid');
+  $('#bUndo').onclick = undo; $('#bRedo').onclick = redo;
+  $('#bGrid').onclick = () => { S.showGrid = !S.showGrid; uiRefresh(); render(); };
+  $('#zIn').onclick = () => zoomAt(1.4); $('#zOut').onclick = () => zoomAt(1 / 1.4); $('#zFit').onclick = fitView;
+  $('#ctx').onclick = e => { const b = e.target.closest('[data-c]'); if (b) ctxAct(b.dataset.c); };
+  const pn = $('#panel');
+  pn.addEventListener('click', panelClick); pn.addEventListener('input', panelInput); pn.addEventListener('change', panelChange);
+}
+
+const ctxBtn = (c, label, on) => `<button class="cb ${on ? 'on' : ''}" data-c="${c}">${label}</button>`;
+function drawCtx() {
+  let h = ctxBtn('multi', 'چندانتخابی', S.multi) + ctxBtn('con', 'قید ⇧ (نسبت/زاویه)', S.constrain) + ctxBtn('snap', 'چسبیدن به شبکه', S.snap);
+  if (S.pen && S.pen.pts.length) h = ctxBtn('penok', '✓ پایان مسیر') + ctxBtn('penclose', '◯ بستن مسیر') + ctxBtn('penundo', '↶ حذف آخرین نقطه') + ctxBtn('pencancel', '✕ لغو') + h;
+  if (S.sel.length) h += ctxBtn('dup', 'تکثیر') + ctxBtn('del', 'حذف') + ctxBtn('copy', 'کپی') + ctxBtn('paste', 'چسباندن') + ctxBtn('group', 'گروه') + ctxBtn('ungroup', 'خروج از گروه') + ctxBtn('front', 'روی همه') + ctxBtn('back', 'زیر همه');
+  else if (S.clip) h += ctxBtn('paste', 'چسباندن');
+  if (S.anchors.size) h = ctxBtn('delanc', 'حذف نقطه') + ctxBtn('smooth', 'نرم/گوشه') + h;
+  $('#ctx').innerHTML = h;
+}
+function ctxAct(c) {
+  switch (c) {
+    case 'multi': S.multi = !S.multi; break; case 'con': S.constrain = !S.constrain; break; case 'snap': S.snap = !S.snap; break;
+    case 'penok': finishPen(); break; case 'penclose': if (S.pen) { S.pen.closed = true; finishPen(); } break; case 'penundo': penUndoPoint(); break; case 'pencancel': finishPen(false); break;
+    case 'dup': duplicateSel(); break; case 'del': deleteSel(); break; case 'copy': copySel(); break; case 'paste': pasteClip(); break;
+    case 'group': groupSel(); break; case 'ungroup': ungroupSel(); break; case 'front': arrange('front'); break; case 'back': arrange('back'); break;
+    case 'delanc': deleteSelAnchors(); break; case 'smooth': toggleSmoothSel(); break;
+  }
+  uiRefresh();
+}
+function uiZoom() { $('#zFit').textContent = Math.round(S.view.s * 100) + '%'; }
+
+let lastPanelKey = '';
+function uiRefresh(force) {
+  $$('#tools .tool').forEach(b => b.classList.toggle('on', b.dataset.tool === S.tool));
+  $$('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === S.panel));
+  $('#bUndo').disabled = hi <= 0; $('#bRedo').disabled = hi >= hist.length - 1;
+  $('#bGrid').classList.toggle('on', S.showGrid);
+  drawCtx();
+  const pn = $('#panel'), was = pn.classList.contains('open');
+  pn.classList.toggle('open', !!S.panel);
+  if (was !== !!S.panel) setTimeout(() => { /* stage resized */ }, 0);
+  if (S.panel) {
+    const ae = document.activeElement;
+    if (!force && ae && pn.contains(ae) && /INPUT|SELECT|TEXTAREA/.test(ae.tagName)) return;
+    const sc = pn.scrollTop, same = lastPanelKey === S.panel; lastPanelKey = S.panel;
+    pn.innerHTML = PANELS[S.panel](); pn.scrollTop = same ? sc : 0;
+    if (S.panel === 'style') initPicker();
+  } else lastPanelKey = '';
+}
+
+/* ---- panels ---- */
+const row = (...c) => `<div class="prow">${c.join('')}</div>`;
+const grp = (name, items, cur, attr) => `<div class="seg">${items.map(([v, l]) => `<button class="${cur === v ? 'on' : ''}" data-${attr}="${v}">${l}</button>`).join('')}</div>`;
+const num = (k, v, min, max, step, label, extra) => `<label class="nf"><span>${label}</span><input type="number" dir="ltr" data-k="${k}" value="${N(v)}" min="${min}" max="${max}" step="${step}" ${extra || ''}></label>`;
+const rng = (k, v, min, max, step, label) => `<label class="rf"><span>${label}</span><input type="range" data-k="${k}" value="${v}" min="${min}" max="${max}" step="${step}"><output>${N(v)}</output></label>`;
+
+const PANELS = {
+  style() {
+    const st = S.style, t = S.target, selText = selObjs().some(o => o.type === 'text') || S.tool === 'text';
+    const sw = (k, col, label) => `<button class="swt ${t === k ? 'on' : ''}" data-tgt="${k}"><i id="sw_${k}" class="${col ? '' : 'none'}" style="${col ? 'background:' + col : ''}"></i><span>${label}</span></button>`;
+    let h = row(sw('fill', st.fill, 'پر کردن'), sw('stroke', st.stroke, 'خط دور'), st.grad ? sw('g2', st.grad.c2, 'رنگ دوم') : '',
+      `<button class="cb" data-a="none">بدون رنگ</button><button class="cb" data-a="swap">جابجایی</button>`);
+    h += `<div id="pk"><canvas id="pkcv" width="300" height="105"></canvas><input type="range" id="pkh" min="0" max="360" step="1"><input id="pkhex" dir="ltr" maxlength="7"></div>`;
+    h += `<div class="sws">${SWATCHES.concat(S.recent).map(c => `<button class="sw" data-c="${c}" style="background:${c}"></button>`).join('')}</div>`;
+    h += row(`<label class="chk"><input type="checkbox" data-k="gradon" ${st.grad ? 'checked' : ''}> گرادیان خطی</label>`, st.grad ? rng('gang', st.grad.a, 0, 360, 1, 'زاویه') : '');
+    h += `<h4>خط دور (Stroke)</h4>` + row(rng('sw', st.sw, 0, 80, 0.5, 'ضخامت'));
+    h += row(`<span class="lb">سر خط</span>` + grp('cap', [['butt', 'تخت'], ['round', 'گرد'], ['square', 'مربع']], st.cap, 'cap'), `<span class="lb">گوشه</span>` + grp('join', [['miter', 'تیز'], ['round', 'گرد'], ['bevel', 'پخ']], st.join, 'join'));
+    h += row(`<span class="lb">الگو</span>` + grp('dash', [['none', 'ساده'], ['dash', 'خط‌چین'], ['dot', 'نقطه‌چین']], st.dash, 'dash'), `<span class="lb">قانون پر</span>` + grp('rule', [['nonzero', 'Non-zero'], ['evenodd', 'Even-odd']], st.rule, 'rule'));
+    h += rng('op', Math.round(st.op * 100), 0, 100, 1, 'شفافیت %');
+    h += `<h4>گزینه‌های ابزار</h4>` + row(rng('radius', S.opt.radius, 0, 300, 1, 'گردی گوشه مستطیل'), rng('sides', S.opt.sides, 3, 16, 1, 'اضلاع چندضلعی'));
+    h += row(rng('points', S.opt.points, 3, 16, 1, 'رأس ستاره'), rng('inner', Math.round(S.opt.inner * 100), 5, 95, 1, 'شعاع داخلی ستاره %'));
+    if (selText) h += `<h4>متن</h4>` + row(rng('tsize', S.opt.size, 6, 600, 1, 'اندازه'), `<span class="lb">فونت</span>` + grp('font', [['sans', 'Sans'], ['serif', 'Serif'], ['mono', 'Mono']], S.opt.font, 'font'),
+      `<button class="cb ${S.opt.bold ? 'on' : ''}" data-a="bold"><b>B</b></button><button class="cb ${S.opt.italic ? 'on' : ''}" data-a="italic"><i>I</i></button>`);
+    return h;
+  },
+  layers() {
+    let h = row(`<button class="cb" data-a="ladd">+ لایه جدید</button><button class="cb" data-a="ldel">حذف لایه</button><button class="cb" data-a="lup">▲ بالا</button><button class="cb" data-a="ldn">▼ پایین</button><button class="cb" data-a="lren">تغییر نام</button>`);
+    h += '<div class="list">' + doc.layers.map((L, i) => `<div class="li ${i === S.cur ? 'cur' : ''}" data-li="${i}"><button data-a="lvis" data-li="${i}">${L.visible ? '👁' : '◌'}</button><button data-a="llock" data-li="${i}">${L.locked ? '🔒' : '🔓'}</button><span class="nm">${esc(L.name)}</span><span class="cnt">${L.objs.length}</span></div>`).reverse().join('') + '</div>';
+    const L = doc.layers[S.cur];
+    h += `<h4>اشیاء «${esc(L.name)}»</h4><div class="list">` + L.objs.map(o => `<div class="oi ${S.sel.includes(o.id) ? 'on' : ''}" data-oid="${o.id}"><span>${o.type === 'group' ? '▣' : o.type === 'text' ? 'T' : '◇'}</span><span class="nm">${esc(o.name || o.type)}</span></div>`).reverse().join('') + '</div>';
+    return h;
+  },
+  arrange() {
+    const b = (a, l) => `<button class="cb" data-a="${a}">${l}</button>`;
+    return `<h4>تراز (Align)</h4>` + row(`<label class="chk"><input type="checkbox" data-k="alignboard" ${S.alignBoard ? 'checked' : ''}> نسبت به صفحه</label>`) +
+      row(b('al:l', '⇤ چپ'), b('al:c', '↔ مرکز افقی'), b('al:r', '⇥ راست'), b('al:t', '⤒ بالا'), b('al:m', '↕ مرکز عمودی'), b('al:b', '⤓ پایین'), b('al:dh', 'توزیع افقی'), b('al:dv', 'توزیع عمودی')) +
+      `<h4>ترتیب (Arrange)</h4>` + row(b('ar:front', 'آوردن به جلو'), b('ar:fwd', 'یک مرحله جلو'), b('ar:bwd', 'یک مرحله عقب'), b('ar:back', 'بردن به عقب')) +
+      `<h4>مسیر</h4>` + row(b('grp', 'گروه (Group)'), b('ungrp', 'خروج از گروه'), b('cmp', 'مسیر مرکب (Compound)'), b('rel', 'آزاد کردن مرکب'), b('closep', 'بستن مسیر'), b('rev', 'معکوس کردن جهت'), b('dup', 'تکثیر'), b('del', 'حذف'));
+  },
+  xform() {
+    const bb = selBox(); if (!bb) return `<p class="hint">یک شیء را انتخاب کنید.</p>`;
+    const w = bb[2] - bb[0], hh = bb[3] - bb[1], b = (a, l) => `<button class="cb" data-a="${a}">${l}</button>`;
+    return row(num('X', bb[0], -99999, 99999, 1, 'X'), num('Y', bb[1], -99999, 99999, 1, 'Y'), num('W', w, 0.1, 99999, 1, 'عرض'), num('H', hh, 0.1, 99999, 1, 'ارتفاع')) +
+      row(`<label class="chk"><input type="checkbox" data-k="lockratio" ${S.lockRatio ? 'checked' : ''}> قفل نسبت</label>`) +
+      `<h4>چرخش / مقیاس</h4>` + row(num('rot', 0, -360, 360, 1, 'چرخش°'), b('rotapply', 'اعمال'), b('rot90', '⟳ ۹۰°'), b('rot90n', '⟲ ۹۰°'), b('rot180', '۱۸۰°')) +
+      row(num('scl', 100, 1, 5000, 1, 'مقیاس %'), b('sclapply', 'اعمال'), b('flipH', '⇋ قرینه افقی'), b('flipV', '⇅ قرینه عمودی'));
+  },
+  page() {
+    const b = (a, l) => `<button class="cb" data-a="${a}">${l}</button>`;
+    return `<h4>بوم (Artboard)</h4>` + row(num('docw', doc.w, 16, 20000, 1, 'عرض px'), num('doch', doc.h, 16, 20000, 1, 'ارتفاع px'), b('docapply', 'اعمال')) +
+      row(b('pre:794x1123', 'A4'), b('pre:1123x794', 'A4 افقی'), b('pre:1080x1080', '۱۰۸۰²'), b('pre:1920x1080', 'HD'), b('pre:1080x1920', 'استوری'), b('pre:512x512', 'آیکون ۵۱۲')) +
+      `<h4>پس‌زمینه</h4><div class="sws">${['#ffffff', '#f8f4e8', '#e5e7eb', '#9ca3af', '#111827', '#000000', '#fde68a', '#bfdbfe'].map(c => `<button class="sw" data-bg="${c}" style="background:${c}"></button>`).join('')}</div>` +
+      `<h4>شبکه</h4>` + row(num('grid', doc.grid, 1, 500, 1, 'اندازه شبکه'), `<label class="chk"><input type="checkbox" data-k="showgrid" ${S.showGrid ? 'checked' : ''}> نمایش</label>`, `<label class="chk"><input type="checkbox" data-k="snap" ${S.snap ? 'checked' : ''}> چسبیدن</label>`) +
+      `<h4>سند</h4>` + row(b('newdoc', 'سند جدید'), b('fit', 'جا دادن در صفحه'));
+  },
+  export() {
+    const b = (a, l, c) => `<button class="cb big ${c || ''}" data-a="${a}">${l}</button>`;
+    return row(`<label class="nf wide"><span>نام فایل</span><input type="text" dir="ltr" data-k="fname" value="${esc(S.fname || 'drawing')}"></label>`) +
+      row(`<label class="chk"><input type="checkbox" data-k="expbg" ${S.expBg !== false ? 'checked' : ''}> شامل پس‌زمینه</label>`, `<span class="lb">PNG</span>` + grp('pngs', [['1', '×۱'], ['2', '×۲'], ['4', '×۴']], String(S.pngScale || 2), 'pngs')) +
+      row(b('ex:ai', 'خروجی AI (Illustrator)', 'pri'), b('ex:pdf', 'خروجی PDF', 'pri'), b('ex:svg', 'خروجی SVG'), b('ex:png', 'خروجی PNG')) +
+      `<h4>پروژه</h4>` + row(b('ex:json', 'ذخیره پروژه (JSON)'), `<label class="cb big filebtn">باز کردن پروژه<input type="file" id="openf" accept=".json,application/json" hidden></label>`) +
+      `<p class="hint">فایل‌ها در پوشه‌ی Downloads/VectorStudio ذخیره می‌شوند.<br>AI: یک فایل PDF-سازگار با پسوند .ai است که Illustrator مستقیم باز می‌کند و مسیرها و لایه‌ها قابل ویرایش هستند.</p>`;
+  }
+};
+
+/* ---- panel events ---- */
+function panelClick(e) {
+  const t = e.target, q = s => t.closest(s);
+  let b;
+  if ((b = q('[data-tgt]'))) { S.target = b.dataset.tgt; uiRefresh(true); return; }
+  if ((b = q('.sw[data-c]'))) { pkSetHex(b.dataset.c, true); return; }
+  if ((b = q('[data-bg]'))) { doc.bg = b.dataset.bg; commit(); render(); return; }
+  if ((b = q('[data-cap]'))) { setStyle({ cap: b.dataset.cap }, true); uiRefresh(true); return; }
+  if ((b = q('[data-join]'))) { setStyle({ join: b.dataset.join }, true); uiRefresh(true); return; }
+  if ((b = q('[data-dash]'))) { setStyle({ dash: b.dataset.dash }, true); uiRefresh(true); return; }
+  if ((b = q('[data-rule]'))) { setStyle({ rule: b.dataset.rule }, true); uiRefresh(true); return; }
+  if ((b = q('[data-pngs]'))) { S.pngScale = +b.dataset.pngs; uiRefresh(true); return; }
+  if ((b = q('[data-font]'))) { S.opt.font = b.dataset.font; textPatch({ font: S.opt.font }); uiRefresh(true); return; }
+  if ((b = q('[data-oid]'))) { setSel([b.dataset.oid]); render(); uiRefresh(true); return; }
+  if ((b = q('.li'))) {
+    const i = +b.dataset.li, ab = q('[data-a]');
+    if (ab && ab.dataset.a === 'lvis') { doc.layers[i].visible = !doc.layers[i].visible; commit(); render(); uiRefresh(true); return; }
+    if (ab && ab.dataset.a === 'llock') { doc.layers[i].locked = !doc.layers[i].locked; commit(); uiRefresh(true); return; }
+    if (S.cur === i) askInput('نام لایه', doc.layers[i].name, v => { if (v) { doc.layers[i].name = v; commit(); uiRefresh(true); } });
+    S.cur = i; uiRefresh(true); return;
+  }
+  if ((b = q('[data-a]'))) panelAct(b.dataset.a);
+}
+function textPatch(p) { let ch = false; selObjs().forEach(o => { if (o.type === 'text') { Object.assign(o, p); ch = true; } }); if (ch) { commit(); render(); } }
+function panelAct(a) {
+  const [k, v] = a.split(':');
+  switch (k) {
+    case 'none': S.target === 'stroke' ? setStyle({ stroke: null }, true) : setStyle({ fill: null, grad: null }, true); uiRefresh(true); break;
+    case 'swap': { const st = S.style; setStyle({ fill: st.stroke, stroke: st.fill, grad: null }, true); uiRefresh(true); break; }
+    case 'bold': S.opt.bold = !S.opt.bold; textPatch({ bold: S.opt.bold }); uiRefresh(true); break;
+    case 'italic': S.opt.italic = !S.opt.italic; textPatch({ italic: S.opt.italic }); uiRefresh(true); break;
+    case 'ladd': doc.layers.push({ id: 'l' + (doc.uid++), name: 'لایه ' + (doc.layers.length + 1), visible: true, locked: false, objs: [] }); S.cur = doc.layers.length - 1; commit(); uiRefresh(true); break;
+    case 'ldel': if (doc.layers.length < 2) { toast('حداقل یک لایه لازم است'); break; } confirmBox('این لایه با همه اشیایش حذف شود؟', () => { const ids = new Set(doc.layers[S.cur].objs.map(o => o.id)); doc.layers.splice(S.cur, 1); S.cur = clamp(S.cur, 0, doc.layers.length - 1); S.sel = S.sel.filter(i => !ids.has(i)); commit(); render(); uiRefresh(true); }); break;
+    case 'lup': if (S.cur < doc.layers.length - 1) { [doc.layers[S.cur], doc.layers[S.cur + 1]] = [doc.layers[S.cur + 1], doc.layers[S.cur]]; S.cur++; commit(); render(); uiRefresh(true); } break;
+    case 'ldn': if (S.cur > 0) { [doc.layers[S.cur], doc.layers[S.cur - 1]] = [doc.layers[S.cur - 1], doc.layers[S.cur]]; S.cur--; commit(); render(); uiRefresh(true); } break;
+    case 'lren': askInput('نام لایه', doc.layers[S.cur].name, x => { if (x) { doc.layers[S.cur].name = x; commit(); uiRefresh(true); } }); break;
+    case 'al': align(v, !!S.alignBoard); break;
+    case 'ar': arrange(v); uiRefresh(true); break;
+    case 'grp': groupSel(); break; case 'ungrp': ungroupSel(); break; case 'cmp': compoundSel(); break; case 'rel': releaseSel(); break;
+    case 'closep': closeOpenSel(); break; case 'rev': reverseSel(); break; case 'dup': duplicateSel(); break; case 'del': deleteSel(); break;
+    case 'rotapply': { const bb = selBox(), d = +$('#panel [data-k=rot]').value || 0; if (bb) transformSel(mRotAt(d, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2)); break; }
+    case 'rot90': case 'rot90n': case 'rot180': { const bb = selBox(); if (bb) transformSel(mRotAt(k === 'rot90' ? 90 : k === 'rot90n' ? -90 : 180, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2)); break; }
+    case 'sclapply': { const bb = selBox(), s = (+$('#panel [data-k=scl]').value || 100) / 100; if (bb) transformSel(mScaleAt(s, s, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2)); break; }
+    case 'flipH': { const bb = selBox(); if (bb) transformSel(mScaleAt(-1, 1, (bb[0] + bb[2]) / 2, 0)); break; }
+    case 'flipV': { const bb = selBox(); if (bb) transformSel(mScaleAt(1, -1, 0, (bb[1] + bb[3]) / 2)); break; }
+    case 'docapply': { doc.w = clamp(+$('#panel [data-k=docw]').value || doc.w, 16, 20000); doc.h = clamp(+$('#panel [data-k=doch]').value || doc.h, 16, 20000); commit(); fitView(); uiRefresh(true); break; }
+    case 'pre': { const [w, h] = v.split('x').map(Number); doc.w = w; doc.h = h; commit(); fitView(); uiRefresh(true); break; }
+    case 'fit': fitView(); break;
+    case 'newdoc': confirmBox('سند جدید ساخته شود؟ تغییرات ذخیره‌نشده از بین می‌روند.', () => { doc = newDoc(doc.w, doc.h); S.sel = []; S.cur = 0; S.anchors.clear(); hist = []; hi = -1; commit(); fitView(); uiRefresh(true); }); break;
+    case 'ex': doExport(v); break;
+  }
+}
+function panelInput(e) {
+  const t = e.target, k = t.dataset.k; if (!k) return;
+  const v = t.type === 'checkbox' ? t.checked : t.value;
+  if (t.type === 'range') { const o = t.parentElement.querySelector('output'); if (o) o.textContent = N(v); }
+  switch (k) {
+    case 'sw': setStyle({ sw: +v }); break;
+    case 'op': setStyle({ op: +v / 100 }); break;
+    case 'gang': setStyle({ grad: { ...S.style.grad, a: +v } }); break;
+    case 'radius': S.opt.radius = +v; break; case 'sides': S.opt.sides = +v; break; case 'points': S.opt.points = +v; break; case 'inner': S.opt.inner = +v / 100; break;
+    case 'tsize': S.opt.size = +v; selObjs().forEach(o => { if (o.type === 'text') o.size = +v; }); render(); break;
+  }
+}
+function panelChange(e) {
+  const t = e.target, k = t.dataset.k; if (!k) return;
+  const v = t.type === 'checkbox' ? t.checked : t.value, n = parseFloat(v);
+  switch (k) {
+    case 'sw': case 'op': case 'gang': commit(); break;
+    case 'tsize': commit(); break;
+    case 'gradon': { const st = S.style; setStyle({ grad: v ? { c1: st.fill || '#4c8dff', c2: '#ffffff', a: 0 } : null, fill: st.fill || '#4c8dff' }, true); uiRefresh(true); break; }
+    case 'alignboard': S.alignBoard = v; break;
+    case 'lockratio': S.lockRatio = v; break;
+    case 'showgrid': S.showGrid = v; render(); uiRefresh(); break;
+    case 'snap': S.snap = v; uiRefresh(); break;
+    case 'grid': doc.grid = clamp(n || 20, 1, 500); commit(); render(); break;
+    case 'fname': S.fname = v.replace(/[^\w\-. ]+/g, '_') || 'drawing'; break;
+    case 'expbg': S.expBg = v; break;
+    case 'X': case 'Y': case 'W': case 'H': xformInput(k, n); break;
+  }
+  if (t.id === 'openf') return;
+}
+document.addEventListener('change', e => {
+  if (e.target.id === 'openf' && e.target.files[0]) {
+    const fr = new FileReader(); fr.onload = () => {
+      try { const d = JSON.parse(fr.result); if (!d.layers) throw 0; doc = d; S.sel = []; S.cur = 0; hist = []; hi = -1; commit(); fitView(); uiRefresh(true); toast('پروژه باز شد'); } catch (x) { toast('فایل پروژه معتبر نیست'); }
+    }; fr.readAsText(e.target.files[0]);
+  }
+});
+function xformInput(k, n) {
+  const bb = selBox(); if (!bb || isNaN(n)) return;
+  const w = bb[2] - bb[0], h = bb[3] - bb[1];
+  if (k === 'X') mapSel(mTrans(n - bb[0], 0)); else if (k === 'Y') mapSel(mTrans(0, n - bb[1]));
+  else if (k === 'W' && w > 0) { const s = n / w; mapSel(mScaleAt(s, S.lockRatio ? s : 1, bb[0], bb[1])); }
+  else if (k === 'H' && h > 0) { const s = n / h; mapSel(mScaleAt(S.lockRatio ? s : 1, s, bb[0], bb[1])); }
+  commit(); render(); uiRefresh(true);
+}
+function mapSel(m) { selObjs().forEach(o => mapObj(o, m)); }
+
+/* ---- color picker ---- */
+const PK = { h: 210, s: 0.7, v: 1 };
+function targetColor() { const st = S.style; return S.target === 'fill' ? st.fill : S.target === 'stroke' ? st.stroke : st.grad && st.grad.c2; }
+function initPicker() {
+  const c = $('#pkcv'); if (!c) return;
+  const col = targetColor(); if (col) { const [r, g, b] = hex2rgb(col), [h, s, v] = rgb2hsv(r, g, b); if (s > 0.02) PK.h = h; PK.s = s; PK.v = v; }
+  $('#pkh').value = PK.h; $('#pkhex').value = col || '';
+  pkDraw();
+  const set = e => { const r = c.getBoundingClientRect(); PK.s = clamp((e.clientX - r.left) / r.width, 0, 1); PK.v = 1 - clamp((e.clientY - r.top) / r.height, 0, 1); pkApply(false); };
+  let down = false;
+  c.style.touchAction = 'none';
+  c.onpointerdown = e => { down = true; c.setPointerCapture(e.pointerId); set(e); };
+  c.onpointermove = e => { if (down) set(e); };
+  c.onpointerup = c.onpointercancel = () => { if (down) { down = false; pkApply(true); } };
+  $('#pkh').oninput = e => { PK.h = +e.target.value; pkApply(false); };
+  $('#pkh').onchange = () => pkApply(true);
+  $('#pkhex').onchange = e => { let v = e.target.value.trim(); if (/^#?[0-9a-f]{6}$/i.test(v) || /^#?[0-9a-f]{3}$/i.test(v)) { if (v[0] !== '#') v = '#' + v; pkSetHex(v.length === 4 ? '#' + v.slice(1).split('').map(x => x + x).join('') : v, true); } };
+}
+function pkDraw() {
+  const c = $('#pkcv'); if (!c) return; const x = c.getContext('2d'), w = c.width, h = c.height;
+  x.fillStyle = `hsl(${PK.h},100%,50%)`; x.fillRect(0, 0, w, h);
+  let g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, '#fff'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, '#000'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  x.beginPath(); x.arc(PK.s * w, (1 - PK.v) * h, 8, 0, 7); x.lineWidth = 3; x.strokeStyle = '#fff'; x.stroke(); x.lineWidth = 1; x.strokeStyle = '#000'; x.stroke();
+}
+function pkApply(final) {
+  const [r, g, b] = hsv2rgb(PK.h, PK.s, PK.v), hex = rgb2hex(r, g, b);
+  $('#pkhex').value = hex; pkDraw(); setTargetColor(hex, final);
+}
+function pkSetHex(hex, final) {
+  const [r, g, b] = hex2rgb(hex), [h, s, v] = rgb2hsv(r, g, b); if (s > 0.02) PK.h = h; PK.s = s; PK.v = v;
+  if ($('#pkh')) { $('#pkh').value = PK.h; $('#pkhex').value = hex; pkDraw(); }
+  setTargetColor(hex, final);
+}
+function setTargetColor(hex, final) {
+  const st = S.style, t = S.target;
+  if (t === 'fill') setStyle({ fill: hex, grad: st.grad ? { ...st.grad, c1: hex } : null }, final);
+  else if (t === 'stroke') setStyle({ stroke: hex, sw: st.sw > 0 ? st.sw : 2 }, final);
+  else if (st.grad) setStyle({ grad: { ...st.grad, c2: hex } }, final);
+  const el = $('#sw_' + t); if (el) { el.style.background = hex; el.classList.remove('none'); }
+  if (final) { S.recent = [hex, ...S.recent.filter(c => c !== hex)].slice(0, 8); }
+}
+
+/* ---- keyboard (desktop / external keyboard) ---- */
+document.addEventListener('keydown', e => {
+  if (/INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '')) return;
+  const k = e.key.toLowerCase(), ctrl = e.ctrlKey || e.metaKey;
+  if (ctrl && k === 'z') { e.shiftKey ? redo() : undo(); e.preventDefault(); return; }
+  if (ctrl && k === 'y') { redo(); return; } if (ctrl && k === 'c') { copySel(); return; } if (ctrl && k === 'v') { pasteClip(); return; }
+  if (ctrl && k === 'd') { duplicateSel(); e.preventDefault(); return; } if (ctrl && k === 'g') { e.shiftKey ? ungroupSel() : groupSel(); e.preventDefault(); return; }
+  if (k === 'delete' || k === 'backspace') { deleteSel(); return; }
+  if (k === 'enter' && S.pen) { finishPen(); return; } if (k === 'escape') { if (S.pen) finishPen(false); else { setSel([]); render(); } return; }
+  const map = { v: 'select', a: 'direct', p: 'pen', '=': 'addpt', '-': 'delpt', c: 'convert', n: 'pencil', '\\': 'line', m: 'rect', l: 'ellipse', t: 'text', i: 'eyedrop', h: 'hand' };
+  if (!ctrl && map[k]) setTool(map[k]);
+  if (k.startsWith('arrow') && S.sel.length) { const d = e.shiftKey ? 10 : 1; transformSel(mTrans(k === 'arrowleft' ? -d : k === 'arrowright' ? d : 0, k === 'arrowup' ? -d : k === 'arrowdown' ? d : 0)); e.preventDefault(); }
+});
+
+/* Android back button hook */
+window.__back = function () {
+  if ($('#modal').classList.contains('show')) { $('#modal').classList.remove('show'); return true; }
+  if (S.pen) { finishPen(false); return true; }
+  if (S.panel) { S.panel = null; uiRefresh(true); return true; }
+  if (S.sel.length) { setSel([]); render(); return true; }
+  return false;
+};
+
+/* ===== export: SVG / PNG / PDF / AI / project; init ===== */
+function b64(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+const str2u8 = s => { const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i) & 255; return u; };
+const u82str = u => { let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return s; };
+
+function saveBytes(name, mime, u8) {
+  if (window.AndroidBridge && AndroidBridge.saveFile) { AndroidBridge.saveFile(name, mime, b64(u8)); return; }
+  const url = URL.createObjectURL(new Blob([u8], { type: mime })), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1500); toast('ذخیره شد: ' + name);
+}
+
+async function deflate(u8) {
+  try {
+    if (typeof CompressionStream === 'undefined') return null;
+    const cs = new Response(new Blob([u8]).stream().pipeThrough(new CompressionStream('deflate')));
+    return new Uint8Array(await cs.arrayBuffer());
+  } catch (e) { return null; }
+}
+
+/* ---- PDF ---- */
+const pdfEsc = s => s.replace(/[\\()]/g, '\\$&');
+const hexU16 = s => '<FEFF' + [...s].map(c => c.charCodeAt(0).toString(16).padStart(4, '0')).join('') + '>';
+const rgbOps = h => hex2rgb(h).map(v => N(v / 255)).join(' ');
+const LATIN = /^[\x20-\x7E\xA0-\xFF\n]*$/;
+
+async function buildPDF() {
+  const W = doc.w, H = doc.h, pw = W * 0.75, ph = H * 0.75;
+  const objs = [null, null, null, null]; // 1 catalog, 2 pages, 3 page
+  const add = b => { objs.push(b); return objs.length - 1; };
+  const streams = [];   // {id, dict, data(u8)}
+  const res = { font: {}, gs: {}, sh: [], xo: [], oc: [] };
+  const addStream = (dict, u8) => { const id = add(null); streams.push({ id, dict, u8 }); return id; };
+  const gsKey = op => { const k = 'G' + Math.round(op * 1000); if (!res.gs[k]) res.gs[k] = add(`<</Type/ExtGState/ca ${N(op)}/CA ${N(op)}>>`); return k; };
+  const fontKey = (fam, b, i) => {
+    const names = { sans: ['Helvetica', 'Helvetica-Bold', 'Helvetica-Oblique', 'Helvetica-BoldOblique'], serif: ['Times-Roman', 'Times-Bold', 'Times-Italic', 'Times-BoldItalic'], mono: ['Courier', 'Courier-Bold', 'Courier-Oblique', 'Courier-BoldOblique'] };
+    const nm = (names[fam] || names.sans)[(b ? 1 : 0) + (i ? 2 : 0)];
+    if (!res.font[nm]) res.font[nm] = { key: 'F' + (Object.keys(res.font).length + 1), id: add(`<</Type/Font/Subtype/Type1/BaseFont/${nm}/Encoding/WinAnsiEncoding>>`) };
+    return res.font[nm].key;
+  };
+  const shKey = (c1, c2, x0, y0, x1, y1) => {
+    const id = add(`<</ShadingType 2/ColorSpace/DeviceRGB/Coords[${N(x0)} ${N(y0)} ${N(x1)} ${N(y1)}]/Function<</FunctionType 2/Domain[0 1]/C0[${rgbOps(c1)}]/C1[${rgbOps(c2)}]/N 1>>/Extend[true true]>>`);
+    const key = 'S' + (res.sh.length + 1); res.sh.push([key, id]); return key;
+  };
+  const pathOps = s => {
+    const p = s.pts, n = p.length; if (!n) return '';
+    const seg = (a, b) => (a.ox === a.x && a.oy === a.y && b.ix === b.x && b.iy === b.y) ? `${N(b.x)} ${N(b.y)} l\n` : `${N(a.ox)} ${N(a.oy)} ${N(b.ix)} ${N(b.iy)} ${N(b.x)} ${N(b.y)} c\n`;
+    let d = `${N(p[0].x)} ${N(p[0].y)} m\n`;
+    for (let i = 1; i < n; i++) d += seg(p[i - 1], p[i]);
+    if (s.closed && n > 1) d += seg(p[n - 1], p[0]) + 'h\n';
+    return d;
+  };
+  const strokeSetup = o => `${N(o.sw)} w ${{ butt: 0, round: 1, square: 2 }[o.cap] || 0} J ${{ miter: 0, round: 1, bevel: 2 }[o.join] || 0} j ${(() => { const d = dashArr(o); return d ? `[${d.map(N).join(' ')}] 0 d` : '[] 0 d'; })()}\n${rgbOps(o.stroke)} RG\n`;
+
+  const drawObj = (o, opm) => {
+    const op = (o.op != null ? o.op : 1) * opm; let c = '';
+    if (o.type === 'group') return o.children.map(ch => drawObj(ch, op)).join('');
+    c += 'q\n'; if (op < 1) c += `/${gsKey(op)} gs\n`;
+    if (o.type === 'text') {
+      const col = o.grad ? o.grad.c1 : (o.fill || null), lines = textLines(o), hasS = o.stroke && o.sw > 0;
+      if (!col && !hasS) return '';
+      if (LATIN.test(o.text)) {
+        const fk = fontKey(o.font, o.bold, o.italic);
+        c += `1 0 0 1 ${N(o.x)} ${N(o.y)} cm\n`;
+        if (o.rot) { const r = o.rot * Math.PI / 180; c += `${N(Math.cos(r))} ${N(Math.sin(r))} ${N(-Math.sin(r))} ${N(Math.cos(r))} 0 0 cm\n`; }
+        if (col) c += `${rgbOps(col)} rg\n`; if (hasS) c += strokeSetup(o);
+        c += `${col && hasS ? 2 : hasS ? 1 : 0} Tr\n`;
+        lines.forEach((l, i) => { c += `BT /${fk} ${N(o.size)} Tf 1 0 0 -1 0 ${N(i * o.size * 1.2)} Tm (${pdfEsc(l)}) Tj ET\n`; });
+      } else { // raster fallback for non-Latin scripts (Persian, Arabic, CJK …)
+        const sc = 4, cv = document.createElement('canvas'), x = cv.getContext('2d'); x.font = fontStr(o, o.size * sc);
+        const w = Math.ceil(Math.max(...lines.map(l => x.measureText(l).width))) + 8 * sc, h = Math.ceil(lines.length * 1.2 * o.size * sc) + 8 * sc;
+        cv.width = w; cv.height = h; x.font = fontStr(o, o.size * sc); x.fillStyle = col || o.stroke; x.textBaseline = 'alphabetic';
+        lines.forEach((l, i) => x.fillText(l, 4 * sc, 4 * sc + (o.size * 0.95 + i * 1.2 * o.size) * sc));
+        const d = x.getImageData(0, 0, w, h).data, rgb = new Uint8Array(w * h * 3), al = new Uint8Array(w * h);
+        for (let i = 0, j = 0; i < w * h; i++) { rgb[j++] = d[i * 4]; rgb[j++] = d[i * 4 + 1]; rgb[j++] = d[i * 4 + 2]; al[i] = d[i * 4 + 3]; }
+        const sm = addStream(`/Type/XObject/Subtype/Image/Width ${w}/Height ${h}/ColorSpace/DeviceGray/BitsPerComponent 8`, al);
+        const im = addStream(`/Type/XObject/Subtype/Image/Width ${w}/Height ${h}/ColorSpace/DeviceRGB/BitsPerComponent 8/SMask ${sm} 0 R`, rgb);
+        const key = 'Im' + (res.xo.length + 1); res.xo.push([key, im]);
+        c += `1 0 0 1 ${N(o.x)} ${N(o.y)} cm\n`;
+        if (o.rot) { const r = o.rot * Math.PI / 180; c += `${N(Math.cos(r))} ${N(Math.sin(r))} ${N(-Math.sin(r))} ${N(Math.cos(r))} 0 0 cm\n`; }
+        c += `${N(w / sc)} 0 0 ${N(-h / sc)} ${N(-4)} ${N(-o.size * 0.95 - 4 + h / sc)} cm\n/${key} Do\n`;
+      }
+      return c + 'Q\n';
+    }
+    const hasFill = !!(o.fill || o.grad), hasStroke = o.stroke && o.sw > 0, ev = o.rule === 'evenodd';
+    const geom = o.sub.map(pathOps).join('');
+    if (o.grad) {
+      const b = bbox(o), cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2, a = o.grad.a * Math.PI / 180;
+      const half = (Math.abs((b[2] - b[0]) * Math.cos(a)) + Math.abs((b[3] - b[1]) * Math.sin(a))) / 2 || 1;
+      const k = shKey(o.grad.c1, o.grad.c2, cx - Math.cos(a) * half, cy - Math.sin(a) * half, cx + Math.cos(a) * half, cy + Math.sin(a) * half);
+      c += `q\n${geom}${ev ? 'W*' : 'W'} n\n/${k} sh\nQ\n`;
+      if (hasStroke) c += strokeSetup(o) + geom + 'S\n';
+    } else if (hasFill && hasStroke) c += `${rgbOps(o.fill)} rg\n` + strokeSetup(o) + geom + (ev ? 'B*' : 'B') + '\n';
+    else if (hasFill) c += `${rgbOps(o.fill)} rg\n` + geom + (ev ? 'f*' : 'f') + '\n';
+    else if (hasStroke) c += strokeSetup(o) + geom + 'S\n';
+    else return '';
+    return c + 'Q\n';
+  };
+
+  let content = `0.75 0 0 -0.75 0 ${N(ph)} cm\n`;
+  if (S.expBg !== false) content += `q ${rgbOps(doc.bg)} rg 0 0 ${W} ${H} re f Q\n`;
+  const ocgIds = [];
+  doc.layers.forEach((L, i) => {
+    if (!L.visible) return;
+    const id = add(`<</Type/OCG/Name ${hexU16(L.name)}>>`), key = 'OC' + (i + 1); ocgIds.push(id); res.oc.push([key, id]);
+    content += `/OC /${key} BDC\n` + L.objs.map(o => drawObj(o, 1)).join('') + 'EMC\n';
+  });
+  const cId = addStream('', str2u8(content));
+  const date = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+  const info = add(`<</Title ${hexU16(S.fname || 'drawing')}/Creator(Vector Studio)/Producer(Vector Studio)/CreationDate(D:${date})>>`);
+  objs[1] = `<</Type/Catalog/Pages 2 0 R/OCProperties<</OCGs[${ocgIds.map(i => i + ' 0 R').join(' ')}]/D<</Order[${ocgIds.map(i => i + ' 0 R').join(' ')}]/ON[${ocgIds.map(i => i + ' 0 R').join(' ')}]>>>>>>`;
+  objs[2] = `<</Type/Pages/Kids[3 0 R]/Count 1>>`;
+  const dict = (name, arr) => arr.length ? `/${name}<<${arr.map(([k, id]) => `/${k} ${id} 0 R`).join('')}>>` : '';
+  objs[3] = `<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${N(pw)} ${N(ph)}]/Contents ${cId} 0 R/Resources<<${dict('Font', Object.values(res.font).map(f => [f.key, f.id]))}${dict('ExtGState', Object.entries(res.gs))}${dict('Shading', res.sh)}${dict('XObject', res.xo)}${dict('Properties', res.oc)}>>>>`;
+  // serialise
+  let out = '%PDF-1.5\n%\xE2\xE3\xCF\xD3\n'; const offs = [];
+  const sByid = {}; streams.forEach(s => sByid[s.id] = s);
+  for (let i = 1; i < objs.length; i++) {
+    offs[i] = out.length;
+    if (sByid[i]) {
+      const s = sByid[i]; let data = s.u8, filt = ''; const z = await deflate(data); if (z && z.length < data.length) { data = z; filt = '/Filter/FlateDecode'; }
+      out += `${i} 0 obj\n<<${s.dict}${filt}/Length ${data.length}>>\nstream\n${u82str(data)}\nendstream\nendobj\n`;
+    } else out += `${i} 0 obj\n${objs[i]}\nendobj\n`;
+  }
+  const xr = out.length;
+  out += `xref\n0 ${objs.length}\n0000000000 65535 f \n` + offs.slice(1).map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('');
+  out += `trailer\n<</Size ${objs.length}/Root 1 0 R/Info ${info} 0 R>>\nstartxref\n${xr}\n%%EOF\n`;
+  return str2u8(out);
+}
+
+async function svgToPng(scale) {
+  const svg = docSvg({ bg: S.expBg !== false }), url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+  const img = new Image(); img.decoding = 'async';
+  await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
+  const cv = document.createElement('canvas'); cv.width = Math.round(doc.w * scale); cv.height = Math.round(doc.h * scale);
+  const x = cv.getContext('2d'); x.drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
+  const blob = await new Promise(r => cv.toBlob(r, 'image/png')); return new Uint8Array(await blob.arrayBuffer());
+}
+
+async function doExport(kind) {
+  const base = S.fname || 'drawing';
+  try {
+    toast('در حال ساخت فایل…');
+    if (kind === 'svg') saveBytes(base + '.svg', 'image/svg+xml', new TextEncoder().encode(docSvg({ bg: S.expBg !== false })));
+    else if (kind === 'png') saveBytes(base + '.png', 'image/png', await svgToPng(Math.min(S.pngScale || 2, Math.floor(8000 / Math.max(doc.w, doc.h)) || 1)));
+    else if (kind === 'pdf') saveBytes(base + '.pdf', 'application/pdf', await buildPDF());
+    else if (kind === 'ai') saveBytes(base + '.ai', 'application/postscript', await buildPDF());
+    else if (kind === 'json') saveBytes(base + '.vstudio.json', 'application/json', new TextEncoder().encode(JSON.stringify(doc)));
+  } catch (e) { console.error(e); toast('خطا در ساخت فایل: ' + (e && e.message || e)); }
+}
+
+/* ---- init ---- */
+function init() {
+  autoload(); buildUI(); installPointer();
+  hist = [JSON.stringify(doc)]; hi = 0;
+  new ResizeObserver(() => { if (!S.fitted) { S.fitted = true; fitView(); } else render(); }).observe($('#stage'));
+  fitView(); uiRefresh(true); uiZoom();
+  document.addEventListener('pointerdown', e => { if (e.target.closest('#stage')) { const a = document.activeElement; if (a && a.blur && /INPUT|SELECT|TEXTAREA/.test(a.tagName)) a.blur(); } }, true);
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  window.__vs = { S, get doc() { return doc; }, buildPDF, docSvg, setTool, commit, render, fitView, toW, toS };
+}
+window.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
